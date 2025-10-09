@@ -6,6 +6,7 @@
 ![License](https://img.shields.io/badge/license-TBD-lightgrey)
 
 ## Table of Contents
+
 - [Fitness Log](#fitness-log)
   - [Table of Contents](#table-of-contents)
   - [1. Project name](#1-project-name)
@@ -34,6 +35,7 @@ Fitness Log is an MVP web application that helps strength-training enthusiasts p
 ## 3. Tech stack
 
 ### Frontend
+
 - Astro 5 for performant hybrid rendering with minimal JavaScript overhead
 - React 19 for interactive client components where user input and live updates are required
 - TypeScript 5 for type-safe development and IDE tooling
@@ -41,10 +43,12 @@ Fitness Log is an MVP web application that helps strength-training enthusiasts p
 - shadcn/ui and Radix UI primitives for accessible, composable UI building blocks
 
 ### Backend & Services
+
 - Supabase (PostgreSQL, authentication, storage) as the managed backend foundation
 - Planned integration with Openrouter.ai for AI-driven recommendations beyond the MVP scope
 
 ### Tooling & Infrastructure
+
 - Node.js 22.14.0 (see `.nvmrc`) and npm for package management
 - ESLint 9 and Prettier for linting and formatting (with Husky + lint-staged pre-commit hooks)
 - GitHub Actions for CI/CD automation
@@ -53,10 +57,12 @@ Fitness Log is an MVP web application that helps strength-training enthusiasts p
 ## 4. Getting started locally
 
 ### Prerequisites
+
 - Node.js 22.14.0 (use `nvm use` to match `.nvmrc`)
 - npm (bundled with Node.js)
 
 ### Installation
+
 1. Clone the repository and install dependencies:
 
 ```bash
@@ -78,6 +84,7 @@ npm run dev
 4. Open the printed local URL (defaults to `http://localhost:3000`) to view the app.
 
 ### Additional commands
+
 - Build a production bundle:
 
 ```bash
@@ -92,15 +99,15 @@ npm run preview
 
 ## 5. Available scripts
 
-| Script | Description |
-| --- | --- |
-| `npm run dev` | Launches the Astro dev server with live reload. |
-| `npm run build` | Generates a production-ready build of the site. |
-| `npm run preview` | Serves the built output locally for smoke testing. |
-| `npm run astro` | Opens the Astro CLI for auxiliary commands. |
-| `npm run lint` | Runs ESLint across the project. |
-| `npm run lint:fix` | Attempts to automatically fix lint issues. |
-| `npm run format` | Formats supported files with Prettier. |
+| Script             | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| `npm run dev`      | Launches the Astro dev server with live reload.    |
+| `npm run build`    | Generates a production-ready build of the site.    |
+| `npm run preview`  | Serves the built output locally for smoke testing. |
+| `npm run astro`    | Opens the Astro CLI for auxiliary commands.        |
+| `npm run lint`     | Runs ESLint across the project.                    |
+| `npm run lint:fix` | Attempts to automatically fix lint issues.         |
+| `npm run format`   | Formats supported files with Prettier.             |
 
 ## 6. Project scope
 
