@@ -1,49 +1,6 @@
 # Schemat bazy danych PostgreSQL - Fitness Log
 
-## 1. Ta**Check constraint:** `CHECK (muscle_subgroup_id IS NULL OR EXISTS (SELECT 1 FROM muscle_subgroups WHERE id = muscle_subgroup_id AND muscle_group_id = exe### 3.5. Indeksy dla e### 3.7. Ind### 3.8. Indek### 3.10. Indeksy dla workout_sessions
-
-```sql
-CREATE INDEX idx_workout_sessions_user_id ON workout_sessions(user_id);
-CREATE INDEX idx_workout_sessions_plan_id ON workout_sessions(workout_plan_id);
-CREATE INDEX idx_workout_sessions_status ON workout_sessions(status);
-CREATE INDEX idx_workout_sessions_scheduled_for ON workout_sessions(scheduled_for);
-CREATE INDEX idx_workout_sessions_user_scheduled ON workout_sessions(user_id, scheduled_for DESC);
-CREATE INDEX idx_workout_sessions_user_status ON workout_sessions(user_id, status);
-CREATE UNIQUE INDEX idx_workout_sessions_user_in_progress ON workout_sessions(user_id) WHERE status = 'in_progress';
-```
-
-### 3.11. Indeksy dla session_setsexercises
-
-```sql
-CREATE INDEX idx_plan_exercises_workout_plan_id ON plan_exercises(workout_plan_id);
-CREATE INDEX idx_plan_exercises_exercise_id ON plan_exercises(exercise_id);
-CREATE INDEX idx_plan_exercises_plan_order ON plan_exercises(workout_plan_id, order_index);
-```
-
-### 3.9. Indeksy dla workout_sessions workout_plans
-
-```sql
-CREATE INDEX idx_workout_plans_user_id ON workout_plans(user_id);
-CREATE INDEX idx_workout_plans_user_active ON workout_plans(user_id, is_active) WHERE is_active = TRUE;
-```
-
-### 3.8. Indeksy dla plan_exercisess
-
-```sql
-CREATE INDEX idx_exercises_muscle_group_id ON exercises(muscle_group_id);
-CREATE INDEX idx_exercises_muscle_subgroup_id ON exercises(muscle_subgroup_id);
-CREATE INDEX idx_exercises_slug ON exercises(slug);
-CREATE INDEX idx_exercises_type ON exercises(exercise_type);
-CREATE INDEX idx_exercises_active ON exercises(is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_exercises_name_trgm ON exercises USING gin(name gin_trgm_ops);
-CREATE INDEX idx_exercises_group_subgroup ON exercises(muscle_group_id, muscle_subgroup_id);
-```
-
-_Uwaga: Indeks `idx_exercises_name_trgm` wymaga rozszerzenia `pg_trgm` dla efektywnego wyszukiwania pełnotekstowego._
-
-### 3.6. Indeksy dla workout_plansle_group_id))` - zapewnia, że podgrupa należy do wybranej grupy mięśniowej
-
-### 1.5. workout_plansele
+## 1. Tabele
 
 ### 1.1. users
 
@@ -101,7 +58,7 @@ Globalna biblioteka ćwiczeń zarządzana centralnie.
 | created_at                | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                                  | Data utworzenia rekordu                 |
 | updated_at                | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                                  | Data ostatniej aktualizacji             |
 
-### 1.4. workout_plans
+### 1.5. workout_plans
 
 Plany treningowe stworzone przez użytkowników.
 
@@ -126,7 +83,7 @@ CHECK (
 )
 ```
 
-### 1.5. plan_exercises
+### 1.6. plan_exercises
 
 Tabela łącząca plany treningowe z ćwiczeniami.
 
@@ -145,7 +102,7 @@ Tabela łącząca plany treningowe z ćwiczeniami.
 
 **Unique constraint:** `UNIQUE(workout_plan_id, order_index)` - zapewnia unikalność kolejności w ramach planu
 
-### 1.6. workout_sessions
+### 1.7. workout_sessions
 
 Konkretne instancje treningów w kalendarzu użytkownika.
 
@@ -170,7 +127,7 @@ Konkretne instancje treningów w kalendarzu użytkownika.
 - `CHECK (status != 'completed' OR (started_at IS NOT NULL AND completed_at IS NOT NULL))` - sesja ukończona musi mieć czas rozpoczęcia i zakończenia
 - `CHECK (completed_at IS NULL OR completed_at >= started_at)` - czas zakończenia nie może być wcześniejszy niż rozpoczęcia
 
-### 1.7. session_sets
+### 1.8. session_sets
 
 Szczegółowy zapis wykonanych serii w ramach sesji treningowej.
 
@@ -270,6 +227,8 @@ CREATE INDEX idx_muscle_subgroups_muscle_group_id ON muscle_subgroups(muscle_gro
 CREATE INDEX idx_muscle_subgroups_slug ON muscle_subgroups(slug);
 ```
 
+ 
+
 ### 3.4. Indeksy dla exercises
 
 ```sql
@@ -282,14 +241,14 @@ CREATE INDEX idx_exercises_name_trgm ON exercises USING gin(name gin_trgm_ops);
 
 _Uwaga: Indeks `idx_exercises_name_trgm` wymaga rozszerzenia `pg_trgm` dla efektywnego wyszukiwania pełnotekstowego._
 
-### 3.4. Indeksy dla workout_plans
+### 3.5. Indeksy dla workout_plans
 
 ```sql
 CREATE INDEX idx_workout_plans_user_id ON workout_plans(user_id);
 CREATE INDEX idx_workout_plans_user_active ON workout_plans(user_id, is_active) WHERE is_active = TRUE;
 ```
 
-### 3.5. Indeksy dla plan_exercises
+### 3.6. Indeksy dla plan_exercises
 
 ```sql
 CREATE INDEX idx_plan_exercises_workout_plan_id ON plan_exercises(workout_plan_id);
@@ -297,7 +256,13 @@ CREATE INDEX idx_plan_exercises_exercise_id ON plan_exercises(exercise_id);
 CREATE INDEX idx_plan_exercises_plan_order ON plan_exercises(workout_plan_id, order_index);
 ```
 
-### 3.6. Indeksy dla workout_sessions
+ 
+
+ 
+
+ 
+
+### 3.7. Indeksy dla workout_sessions
 
 ```sql
 CREATE INDEX idx_workout_sessions_user_id ON workout_sessions(user_id);
@@ -309,7 +274,7 @@ CREATE INDEX idx_workout_sessions_user_status ON workout_sessions(user_id, statu
 CREATE UNIQUE INDEX idx_workout_sessions_user_in_progress ON workout_sessions(user_id) WHERE status = 'in_progress';
 ```
 
-### 3.7. Indeksy dla session_sets
+### 3.8. Indeksy dla session_sets
 
 ```sql
 CREATE INDEX idx_session_sets_workout_session_id ON session_sets(workout_session_id);
