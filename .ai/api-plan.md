@@ -65,7 +65,7 @@ Query-string parameters:
 | POST   | /api/v1/workout-plans              | Create plan                                                   |
 | GET    | /api/v1/workout-plans/:id          | Plan detail + embedded exercises                              |
 | PATCH  | /api/v1/workout-plans/:id          | Update name, schedule, active flag                            |
-| DELETE | /api/v1/workout-plans/:id          | Delete plan                                                   |
+| DELETE | /api/v1/workout-plans/:id          | Delete plan (fails if plan has been used in sessions)         |
 | POST   | /api/v1/workout-plans/:id/activate | Mark plan as active (sets is_active=true, deactivates others) |
 
 Request body (create):
@@ -82,7 +82,6 @@ Request body (create):
       "order_index": 0,
       "target_sets": 4,
       "target_reps": 8,
-      "target_weight": 20,
       "rest_seconds": 120,
       "notes": "Pause reps"
     }
@@ -90,15 +89,17 @@ Request body (create):
 }
 ```
 
+**Uwaga:** Pole `target_weight` nie jest przechowywane w `plan_exercises`. Użytkownicy rejestrują rzeczywisty użyty ciężar w `session_sets.weight_kg` podczas wykonywania treningu.
+
 Validation mirrors DB CHECK constraints.
 
 #### 2.4.1 Plan Exercises sub-resource
 
-| Method | Path                                                | Description                                     |
-| ------ | --------------------------------------------------- | ----------------------------------------------- |
-| POST   | /api/v1/workout-plans/:id/exercises                 | Bulk replace exercises list                     |
-| PATCH  | /api/v1/workout-plans/:id/exercises/:planExerciseId | Partial update (sets, reps, rest, notes, order) |
-| DELETE | /api/v1/workout-plans/:id/exercises/:planExerciseId | Remove exercise from plan                       |
+| Method | Path                                                | Description                                           |
+| ------ | --------------------------------------------------- | ----------------------------------------------------- |
+| POST   | /api/v1/workout-plans/:id/exercises                 | Bulk replace exercises list                           |
+| PATCH  | /api/v1/workout-plans/:id/exercises/:planExerciseId | Partial update (sets, reps, rest, notes, order)       |
+| DELETE | /api/v1/workout-plans/:id/exercises/:planExerciseId | Remove exercise from plan (fails if used in sessions) |
 
 ### 2.5 Workout Sessions
 
@@ -176,16 +177,32 @@ Validation:
 
 ## 6. Error Handling
 
-| Status | Meaning                | Example                                    |
-| ------ | ---------------------- | ------------------------------------------ |
-| 400    | Validation error       | Missing required field                     |
-| 401    | Unauthenticated        | Missing / invalid JWT                      |
-| 403    | Forbidden              | Accessing other user’s resource            |
-| 404    | Not found              | Resource id does not exist                 |
-| 409    | Conflict               | e.g. creating second `in_progress` session |
-| 422    | Business rule violated | Status transition invalid                  |
-| 429    | Too Many Requests      | Rate limit exceeded                        |
-| 500    | Internal Error         | Unhandled server error                     |
+| Status | Meaning                | Example                                                                             |
+| ------ | ---------------------- | ----------------------------------------------------------------------------------- |
+| 400    | Validation error       | Missing required field                                                              |
+| 401    | Unauthenticated        | Missing / invalid JWT                                                               |
+| 403    | Forbidden              | Accessing other user's resource                                                     |
+| 404    | Not found              | Resource id does not exist                                                          |
+| 409    | Conflict               | e.g. creating second `in_progress` session, deleting plan/exercise used in sessions |
+| 422    | Business rule violated | Status transition invalid                                                           |
+| 429    | Too Many Requests      | Rate limit exceeded                                                                 |
+| 500    | Internal Error         | Unhandled server error                                                              |
+
+### Important Notes on DELETE Operations
+
+**Workout Plans:**
+
+- Cannot delete a plan if any of its exercises (`plan_exercises`) have been used in workout sessions (`session_sets` references)
+- Error: 409 Conflict - "Cannot delete workout plan that has been used in workout sessions"
+- Due to CASCADE delete from `workout_plans` to `plan_exercises`, but `session_sets` has ON DELETE RESTRICT to `plan_exercises`
+
+**Plan Exercises:**
+
+- Cannot delete an exercise from a plan if it has been used in any workout session
+- Error: 409 Conflict - "Cannot delete exercise that has been used in workout sessions"
+- Due to ON DELETE RESTRICT constraint from `session_sets.plan_exercise_id` to `plan_exercises.id`
+
+**Workaround:** To delete a plan or exercise that has been used, you would first need to delete all associated workout sessions (which will cascade delete the session_sets). Alternatively, consider implementing soft delete for plans and exercises.
 
 ## 7. Security Considerations
 

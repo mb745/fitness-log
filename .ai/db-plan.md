@@ -1,8 +1,35 @@
 # Schemat bazy danych PostgreSQL - Fitness Log
 
-## 1. Tabele
+## 1. Definicje typów ENUM
 
-### 1.1. users
+Aplikacja wykorzystuje następujące typy wyliczeniowe (enforced przez CHECK constraints w PostgreSQL):
+
+### 1.1. exercise_type (exercises.exercise_type)
+
+- `'compound'` - ćwiczenia złożone, angażujące wiele grup mięśniowych
+- `'isolation'` - ćwiczenia izolowane, skupione na jednej grupie mięśniowej
+
+### 1.2. schedule_type (workout_plans.schedule_type)
+
+- `'weekly'` - harmonogram oparty na dniach tygodnia (schedule_days)
+- `'interval'` - harmonogram oparty na interwale dni (schedule_interval_days)
+
+### 1.3. workout_session_status (workout_sessions.status)
+
+- `'scheduled'` - sesja zaplanowana, jeszcze nierozpoczęta
+- `'in_progress'` - sesja w trakcie wykonywania
+- `'completed'` - sesja ukończona pomyślnie
+- `'abandoned'` - sesja porzucona przed ukończeniem
+
+### 1.4. session_set_status (session_sets.status)
+
+- `'pending'` - seria oczekująca na wykonanie
+- `'completed'` - seria wykonana
+- `'skipped'` - seria pominięta
+
+## 2. Tabele
+
+### 2.1. users
 
 Rozszerza tabelę `auth.users` z Supabase Auth o dane profilowe użytkownika.
 
@@ -16,7 +43,7 @@ Rozszerza tabelę `auth.users` z Supabase Auth o dane profilowe użytkownika.
 | created_at           | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                  | Data utworzenia profilu                   |
 | updated_at           | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                  | Data ostatniej aktualizacji               |
 
-### 1.2. muscle_groups
+### 2.2. muscle_groups
 
 Statyczna tabela słownikowa dla grup mięśniowych.
 
@@ -24,9 +51,10 @@ Statyczna tabela słownikowa dla grup mięśniowych.
 | ---------- | ------------------------ | ----------------------- | -------------------------------------------------------- |
 | id         | SERIAL                   | PRIMARY KEY             | Identyfikator grupy mięśniowej                           |
 | name       | VARCHAR(100)             | NOT NULL, UNIQUE        | Nazwa grupy mięśniowej (np. "Klatka piersiowa", "Plecy") |
+| slug       | VARCHAR(100)             | NOT NULL, UNIQUE        | URL-friendly slug (np. "klatka-piersiowa", "plecy")      |
 | created_at | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW() | Data utworzenia rekordu                                  |
 
-### 1.3. muscle_subgroups
+### 2.3. muscle_subgroups
 
 Statyczna tabela słownikowa dla podgrup mięśniowych.
 
@@ -35,11 +63,15 @@ Statyczna tabela słownikowa dla podgrup mięśniowych.
 | id              | SERIAL                   | PRIMARY KEY                                              | Identyfikator podgrupy mięśniowej                            |
 | muscle_group_id | INTEGER                  | NOT NULL, REFERENCES muscle_groups(id) ON DELETE CASCADE | Grupa mięśniowa nadrzędna                                    |
 | name            | VARCHAR(100)             | NOT NULL                                                 | Nazwa podgrupy mięśniowej (np. "górna", "środkowa", "dolna") |
+| slug            | VARCHAR(100)             | NOT NULL                                                 | URL-friendly slug (np. "gorna", "srodkowa", "dolna")         |
 | created_at      | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                  | Data utworzenia rekordu                                      |
 
-**Unique constraint:** `UNIQUE(muscle_group_id, name)` - zapewnia unikalność nazwy podgrupy w ramach grupy mięśniowej
+**Unique constraints:**
 
-### 1.4. exercises
+- `UNIQUE(muscle_group_id, name)` - zapewnia unikalność nazwy podgrupy w ramach grupy mięśniowej
+- `UNIQUE(muscle_group_id, slug)` - zapewnia unikalność slug w ramach grupy mięśniowej
+
+### 2.4. exercises
 
 Globalna biblioteka ćwiczeń zarządzana centralnie.
 
@@ -58,7 +90,7 @@ Globalna biblioteka ćwiczeń zarządzana centralnie.
 | created_at                | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                                  | Data utworzenia rekordu                 |
 | updated_at                | TIMESTAMP WITH TIME ZONE | NOT NULL, DEFAULT NOW()                                                  | Data ostatniej aktualizacji             |
 
-### 1.5. workout_plans
+### 2.5. workout_plans
 
 Plany treningowe stworzone przez użytkowników.
 
@@ -83,7 +115,7 @@ CHECK (
 )
 ```
 
-### 1.6. plan_exercises
+### 2.6. plan_exercises
 
 Tabela łącząca plany treningowe z ćwiczeniami.
 
@@ -102,7 +134,9 @@ Tabela łącząca plany treningowe z ćwiczeniami.
 
 **Unique constraint:** `UNIQUE(workout_plan_id, order_index)` - zapewnia unikalność kolejności w ramach planu
 
-### 1.7. workout_sessions
+**Uwaga:** Pole `target_weight` celowo nie jest przechowywane w bazie danych. Użytkownicy mogą zapisywać rzeczywisty użyty ciężar w `session_sets.weight_kg` podczas wykonywania treningu.
+
+### 2.7. workout_sessions
 
 Konkretne instancje treningów w kalendarzu użytkownika.
 
@@ -127,7 +161,7 @@ Konkretne instancje treningów w kalendarzu użytkownika.
 - `CHECK (status != 'completed' OR (started_at IS NOT NULL AND completed_at IS NOT NULL))` - sesja ukończona musi mieć czas rozpoczęcia i zakończenia
 - `CHECK (completed_at IS NULL OR completed_at >= started_at)` - czas zakończenia nie może być wcześniejszy niż rozpoczęcia
 
-### 1.8. session_sets
+### 2.8. session_sets
 
 Szczegółowy zapis wykonanych serii w ramach sesji treningowej.
 
@@ -150,40 +184,40 @@ Szczegółowy zapis wykonanych serii w ramach sesji treningowej.
 
 **Check constraint:** `CHECK (status != 'completed' OR (actual_reps IS NOT NULL AND completed_at IS NOT NULL))` - ukończona seria musi mieć zarejestrowane powtórzenia i czas
 
-## 2. Relacje między tabelami
+## 3. Relacje między tabelami
 
-### 2.1. users ↔ auth.users (1:1)
+### 3.1. users ↔ auth.users (1:1)
 
 - Jeden użytkownik w `auth.users` ma jeden rekord w `users`
 - Relacja: `users.id` → `auth.users(id)`
 
-### 2.2. users → workout_plans (1:N)
+### 3.2. users → workout_plans (1:N)
 
 - Jeden użytkownik może mieć wiele planów treningowych
 - Relacja: `workout_plans.user_id` → `users(id)`
 
-### 2.3. users → workout_sessions (1:N)
+### 3.3. users → workout_sessions (1:N)
 
 - Jeden użytkownik może mieć wiele sesji treningowych
 - Relacja: `workout_sessions.user_id` → `users(id)`
 
-### 2.4. muscle_groups → muscle_subgroups (1:N)
+### 3.4. muscle_groups → muscle_subgroups (1:N)
 
 - Jedna grupa mięśniowa może mieć wiele podgrup
 - Relacja: `muscle_subgroups.muscle_group_id` → `muscle_groups(id)`
 
-### 2.5. muscle_groups → exercises (1:N)
+### 3.5. muscle_groups → exercises (1:N)
 
 - Jedna grupa mięśniowa może być przypisana do wielu ćwiczeń
 - Relacja: `exercises.muscle_group_id` → `muscle_groups(id)`
 
-### 2.6. muscle_subgroups → exercises (1:N, opcjonalna)
+### 3.6. muscle_subgroups → exercises (1:N, opcjonalna)
 
 - Jedna podgrupa mięśniowa może być przypisana do wielu ćwiczeń
 - Relacja: `exercises.muscle_subgroup_id` → `muscle_subgroups(id)`
 - Relacja opcjonalna - ćwiczenie może nie mieć przypisanej podgrupy
 
-### 2.7. workout_plans ↔ exercises (N:M przez plan_exercises)
+### 3.7. workout_plans ↔ exercises (N:M przez plan_exercises)
 
 - Wiele planów może zawierać wiele ćwiczeń
 - Tabela łącząca: `plan_exercises`
@@ -191,45 +225,43 @@ Szczegółowy zapis wykonanych serii w ramach sesji treningowej.
   - `plan_exercises.workout_plan_id` → `workout_plans(id)`
   - `plan_exercises.exercise_id` → `exercises(id)`
 
-### 2.8. workout_plans → workout_sessions (1:N)
+### 3.8. workout_plans → workout_sessions (1:N)
 
 - Jeden plan treningowy może generować wiele sesji treningowych
 - Relacja: `workout_sessions.workout_plan_id` → `workout_plans(id)`
 
-### 2.9. workout_sessions → session_sets (1:N)
+### 3.9. workout_sessions → session_sets (1:N)
 
 - Jedna sesja treningowa zawiera wiele serii
 - Relacja: `session_sets.workout_session_id` → `workout_sessions(id)`
 
-### 2.10. plan_exercises → session_sets (1:N)
+### 3.10. plan_exercises → session_sets (1:N)
 
 - Jedno ćwiczenie z planu może być wykonane w wielu seriach
 - Relacja: `session_sets.plan_exercise_id` → `plan_exercises(id)`
 
-## 3. Indeksy
+## 4. Indeksy
 
-### 3.1. Indeksy dla users
+### 4.1. Indeksy dla users
 
 ```sql
 CREATE INDEX idx_users_created_at ON users(created_at);
 ```
 
-### 3.2. Indeksy dla muscle_groups
+### 4.2. Indeksy dla muscle_groups
 
 ```sql
 CREATE INDEX idx_muscle_groups_slug ON muscle_groups(slug);
 ```
 
-### 3.3. Indeksy dla muscle_subgroups
+### 4.3. Indeksy dla muscle_subgroups
 
 ```sql
 CREATE INDEX idx_muscle_subgroups_muscle_group_id ON muscle_subgroups(muscle_group_id);
-CREATE INDEX idx_muscle_subgroups_slug ON muscle_subgroups(slug);
+CREATE INDEX idx_muscle_subgroups_slug ON muscle_subgroups(muscle_group_id, slug);
 ```
 
- 
-
-### 3.4. Indeksy dla exercises
+### 4.4. Indeksy dla exercises
 
 ```sql
 CREATE INDEX idx_exercises_muscle_group_id ON exercises(muscle_group_id);
@@ -241,14 +273,14 @@ CREATE INDEX idx_exercises_name_trgm ON exercises USING gin(name gin_trgm_ops);
 
 _Uwaga: Indeks `idx_exercises_name_trgm` wymaga rozszerzenia `pg_trgm` dla efektywnego wyszukiwania pełnotekstowego._
 
-### 3.5. Indeksy dla workout_plans
+### 4.5. Indeksy dla workout_plans
 
 ```sql
 CREATE INDEX idx_workout_plans_user_id ON workout_plans(user_id);
 CREATE INDEX idx_workout_plans_user_active ON workout_plans(user_id, is_active) WHERE is_active = TRUE;
 ```
 
-### 3.6. Indeksy dla plan_exercises
+### 4.6. Indeksy dla plan_exercises
 
 ```sql
 CREATE INDEX idx_plan_exercises_workout_plan_id ON plan_exercises(workout_plan_id);
@@ -256,13 +288,7 @@ CREATE INDEX idx_plan_exercises_exercise_id ON plan_exercises(exercise_id);
 CREATE INDEX idx_plan_exercises_plan_order ON plan_exercises(workout_plan_id, order_index);
 ```
 
- 
-
- 
-
- 
-
-### 3.7. Indeksy dla workout_sessions
+### 4.7. Indeksy dla workout_sessions
 
 ```sql
 CREATE INDEX idx_workout_sessions_user_id ON workout_sessions(user_id);
@@ -274,7 +300,7 @@ CREATE INDEX idx_workout_sessions_user_status ON workout_sessions(user_id, statu
 CREATE UNIQUE INDEX idx_workout_sessions_user_in_progress ON workout_sessions(user_id) WHERE status = 'in_progress';
 ```
 
-### 3.8. Indeksy dla session_sets
+### 4.8. Indeksy dla session_sets
 
 ```sql
 CREATE INDEX idx_session_sets_workout_session_id ON session_sets(workout_session_id);
@@ -283,9 +309,9 @@ CREATE INDEX idx_session_sets_session_exercise ON session_sets(workout_session_i
 CREATE INDEX idx_session_sets_status ON session_sets(status);
 ```
 
-## 4. Polityki Row-Level Security (RLS)
+## 5. Polityki Row-Level Security (RLS)
 
-### 4.1. Włączenie RLS na wszystkich tabelach
+### 5.1. Włączenie RLS na wszystkich tabelach
 
 ```sql
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -297,7 +323,7 @@ ALTER TABLE session_sets ENABLE ROW LEVEL SECURITY;
 
 _Uwaga: Tabele `muscle_groups` i `exercises` są publiczne i nie wymagają RLS._
 
-### 4.2. Polityki dla users
+### 5.2. Polityki dla users
 
 ```sql
 -- Użytkownik może widzieć i edytować tylko swój profil
@@ -314,7 +340,7 @@ CREATE POLICY "Users can insert own profile" ON users
   WITH CHECK (auth.uid() = id);
 ```
 
-### 4.3. Polityki dla workout_plans
+### 5.3. Polityki dla workout_plans
 
 ```sql
 -- Użytkownik ma pełny dostęp do swoich planów treningowych
@@ -335,7 +361,7 @@ CREATE POLICY "Users can delete own workout plans" ON workout_plans
   USING (auth.uid() = user_id);
 ```
 
-### 4.4. Polityki dla plan_exercises
+### 5.4. Polityki dla plan_exercises
 
 ```sql
 -- Użytkownik ma dostęp do ćwiczeń w swoich planach
@@ -380,7 +406,7 @@ CREATE POLICY "Users can delete own plan exercises" ON plan_exercises
   );
 ```
 
-### 4.5. Polityki dla workout_sessions
+### 5.5. Polityki dla workout_sessions
 
 ```sql
 -- Użytkownik ma pełny dostęp do swoich sesji treningowych
@@ -401,7 +427,7 @@ CREATE POLICY "Users can delete own workout sessions" ON workout_sessions
   USING (auth.uid() = user_id);
 ```
 
-### 4.6. Polityki dla session_sets
+### 5.6. Polityki dla session_sets
 
 ```sql
 -- Użytkownik ma dostęp do serii w swoich sesjach treningowych
@@ -446,7 +472,7 @@ CREATE POLICY "Users can delete own session sets" ON session_sets
   );
 ```
 
-### 4.7. Publiczny dostęp do muscle_groups, muscle_subgroups i exercises
+### 5.7. Publiczny dostęp do muscle_groups, muscle_subgroups i exercises
 
 ```sql
 -- Tabele muscle_groups, muscle_subgroups i exercises są publiczne do odczytu
@@ -467,9 +493,9 @@ CREATE POLICY "Public read access to active exercises" ON exercises
   USING (is_active = TRUE);
 ```
 
-## 5. Funkcje i triggery
+## 6. Funkcje i triggery
 
-### 5.1. Automatyczna aktualizacja updated_at
+### 6.1. Automatyczna aktualizacja updated_at
 
 ```sql
 -- Funkcja do automatycznej aktualizacji kolumny updated_at
@@ -513,7 +539,7 @@ CREATE TRIGGER update_session_sets_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 ```
 
-### 5.2. Polityka retencji danych (2 lata)
+### 6.2. Polityka retencji danych (2 lata)
 
 ```sql
 -- Funkcja do usuwania starych sesji treningowych (starszych niż 2 lata)
@@ -530,7 +556,7 @@ $$ LANGUAGE plpgsql;
 -- SELECT cron.schedule('delete-old-sessions', '0 2 * * 0', 'SELECT delete_old_workout_sessions();');
 ```
 
-### 5.3. Walidacja statusu sesji
+### 6.3. Walidacja statusu sesji
 
 ```sql
 -- Funkcja walidująca zmiany statusu sesji treningowej
@@ -562,7 +588,7 @@ CREATE TRIGGER validate_session_status_before_update
   EXECUTE FUNCTION validate_workout_session_status_change();
 ```
 
-### 5.4. Automatyczne tworzenie session_sets przy rozpoczęciu sesji
+### 6.4. Automatyczne tworzenie session_sets przy rozpoczęciu sesji
 
 ```sql
 -- Funkcja tworząca rekordy session_sets na podstawie plan_exercises
@@ -575,16 +601,14 @@ BEGIN
       workout_session_id,
       plan_exercise_id,
       set_number,
-      target_reps_min,
-      target_reps_max,
+      target_reps,
       status
     )
     SELECT
       NEW.id,
       pe.id,
       generate_series(1, pe.target_sets),
-      pe.target_reps_min,
-      pe.target_reps_max,
+      pe.target_reps,
       'pending'
     FROM plan_exercises pe
     WHERE pe.workout_plan_id = NEW.workout_plan_id
@@ -601,7 +625,9 @@ CREATE TRIGGER create_sets_on_session_start
   EXECUTE FUNCTION create_session_sets_for_workout();
 ```
 
-## 6. Rozszerzenia PostgreSQL
+**Uwaga:** Trigger automatycznie tworzy rekordy `session_sets` **tylko** gdy status zmienia się z `scheduled` na `in_progress`. Każdy set otrzymuje status `pending`, a `completed_at` pozostaje NULL. Aplikacja musi explicite ustawiać `completed_at` przy aktualizacji statusu setu na `completed`.
+
+## 7. Rozszerzenia PostgreSQL
 
 ```sql
 -- Rozszerzenie dla wyszukiwania pełnotekstowego z użyciem trigramów
@@ -614,9 +640,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 ```
 
-## 7. Widoki pomocnicze
+## 8. Widoki pomocnicze
 
-### 7.1. Widok dla nadchodzących treningów użytkownika
+### 8.1. Widok dla nadchodzących treningów użytkownika
 
 ```sql
 CREATE OR REPLACE VIEW upcoming_workouts AS
@@ -637,7 +663,7 @@ GROUP BY ws.id, ws.user_id, ws.scheduled_for, ws.status, wp.name
 ORDER BY ws.scheduled_for ASC;
 ```
 
-### 7.2. Widok dla historii treningów
+### 8.2. Widok dla historii treningów
 
 ```sql
 CREATE OR REPLACE VIEW workout_history AS
@@ -660,7 +686,7 @@ GROUP BY ws.id, ws.user_id, ws.scheduled_for, ws.started_at, ws.completed_at, ws
 ORDER BY ws.scheduled_for DESC;
 ```
 
-### 7.3. Widok dla analizy progresji w ćwiczeniu
+### 8.3. Widok dla analizy progresji w ćwiczeniu
 
 ```sql
 CREATE OR REPLACE VIEW exercise_progression AS
@@ -686,33 +712,33 @@ WHERE ws.status = 'completed' AND ss.status = 'completed'
 ORDER BY ws.user_id, pe.exercise_id, ws.scheduled_for DESC, ss.set_number;
 ```
 
-## 8. Uwagi dotyczące decyzji projektowych
+## 9. Uwagi dotyczące decyzji projektowych
 
-### 8.1. Architektura użytkowników
+### 9.1. Architektura użytkowników
 
 - Tabela `users` rozszerza `auth.users` z Supabase Auth zamiast duplikować dane uwierzytelniające
 - Relacja 1:1 z `auth.users` przez klucz obcy zapewnia spójność
 - Dane profilowe (waga, wzrost, etc.) przechowywane osobno od danych autoryzacyjnych
 
-### 8.2. Harmonogram treningów
+### 9.2. Harmonogram treningów
 
 - Elastyczny model obsługuje dwa typy harmonogramów: dni tygodnia (weekly) i interwał (interval)
 - Constraint na poziomie bazy zapewnia, że tylko jeden typ harmonogramu jest używany
 - `workout_sessions` są instancjami wygenerowanymi z `workout_plans` dla konkretnych dat
 
-### 8.3. Snapshot parametrów
+### 9.3. Snapshot parametrów
 
-- `session_sets` przechowuje snapshot parametrów z planu (`target_reps_min`, `target_reps_max`)
+- `session_sets` przechowuje snapshot parametrów z planu (`target_reps`)
 - Pozwala to na modyfikację planu bez wpływu na historyczne dane
 - Umożliwia dokładną analizę progresji w czasie
 
-### 8.4. Statusy i workflow
+### 9.4. Statusy i workflow
 
 - Statusy sesji: `scheduled` → `in_progress` → `completed`/`abandoned`
 - Unique index zapewnia tylko jedną sesję `in_progress` na użytkownika
 - Triggery automatycznie ustawiają znaczniki czasu przy zmianach statusu
 
-### 8.5. Wydajność
+### 9.5. Wydajność
 
 - Indeksy zoptymalizowane pod najczęstsze zapytania:
   - Wyszukiwanie treningów użytkownika po dacie
@@ -720,20 +746,20 @@ ORDER BY ws.user_id, pe.exercise_id, ws.scheduled_for DESC, ss.set_number;
   - Analiza progresji (indeksy composite)
 - Indeks trigramowy dla pełnotekstowego wyszukiwania ćwiczeń
 
-### 8.6. Bezpieczeństwo
+### 9.6. Bezpieczeństwo
 
 - RLS na wszystkich tabelach użytkownika
 - Tabele `muscle_groups` i `exercises` publiczne do odczytu
 - Polityki wykorzystują `auth.uid()` dla kontroli dostępu
 - Kaskadowe usuwanie zapewnia spójność danych przy usunięciu użytkownika
 
-### 8.7. Retencja danych
+### 9.7. Retencja danych
 
 - Funkcja `delete_old_workout_sessions()` do usuwania sesji starszych niż 2 lata
 - Można zaplanować przez `pg_cron` jako cotygodniowe zadanie
 - Kaskadowe usuwanie automatycznie usuwa powiązane `session_sets`
 
-### 8.8. Skalowalnośc
+### 9.8. Skalowalnośc
 
 - Model zaprojektowany z myślą o przyszłym partycjonowaniu:
   - `workout_sessions` można partycjonować po `scheduled_for`
@@ -741,14 +767,14 @@ ORDER BY ws.user_id, pe.exercise_id, ws.scheduled_for DESC, ss.set_number;
 - Widoki pomocnicze upraszczają złożone zapytania
 - Brak denormalizacji w MVP - można dodać w razie potrzeby
 
-### 8.9. Integracja z Supabase
+### 9.9. Integracja z Supabase
 
 - Wykorzystanie natywnych funkcji Supabase Auth
 - RLS policies kompatybilne z SDK Supabase
 - Triggery i funkcje w PL/pgSQL (natywne wsparcie PostgreSQL)
 - Możliwość użycia Realtime dla aktualizacji na żywo (przyszła funkcjonalność)
 
-### 8.10. Brak obsługi stref czasowych
+### 9.10. Brak obsługi stref czasowych
 
 - Zgodnie z wymaganiami MVP, brak kompleksowej obsługi stref czasowych
 - `TIMESTAMP WITH TIME ZONE` dla precyzyjnych znaczników czasu

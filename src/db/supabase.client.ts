@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient as SupabaseClientBase } from "@supabase/supabase-js";
 
 // Import the generated Database types
 import type { Database } from "./database.types.ts";
@@ -12,3 +12,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+// Export typed SupabaseClient for use throughout the application
+export type SupabaseClient = SupabaseClientBase<Database>;
+
+export const DEFAULT_USER_ID = "fea8017d-967a-4086-8842-6f8d9d72d479";
