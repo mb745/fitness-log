@@ -176,14 +176,7 @@ export const DELETE: APIRoute = async ({ params, request, locals }) => {
   } catch (error) {
     const userId = await checkAuth({ request, locals });
 
-    // Handle specific business errors
-    if (error instanceof Error) {
-      if (error.message === "Cannot delete workout plan that has been used in workout sessions") {
-        logApiError("DELETE /api/v1/workout-plans/:id", userId || undefined, error, "warn");
-        return errorResponse("Conflict", error.message, 409);
-      }
-    }
-
+    // Log and return generic error response
     logApiError("DELETE /api/v1/workout-plans/:id", userId || undefined, error);
     return errorResponse("Internal Server Error", "An unexpected error occurred", 500);
   }

@@ -1,0 +1,29 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  footerLabel?: string;
+  footerHref?: string;
+  footerLinkText?: string;
+}
+const {
+  title = "Zaloguj się",
+  subtitle,
+  footerLabel = "Nie masz konta?",
+  footerHref = "/register",
+  footerLinkText = "Zarejestruj się",
+} = Astro.props as Props;
+---
+
+<div class="mx-auto w-full max-w-md rounded-lg border border-border bg-background p-8 shadow-sm">
+  <div class="mb-6 text-center">
+    <img src="/favicon.png" alt="Fitness Log logo" class="mx-auto size-12" />
+    <h1 class="mt-4 text-2xl font-semibold">{title}</h1>
+    {subtitle && <p class="mt-1 text-muted-foreground">{subtitle}</p>}
+  </div>
+  <slot />
+  <p class="mt-6 text-center text-sm text-muted-foreground">
+    {footerLabel}
+    <a href={footerHref} class="font-medium text-primary hover:underline">{footerLinkText}</a>
+  </p>
+</div>

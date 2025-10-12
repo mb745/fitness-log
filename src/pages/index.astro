@@ -1,8 +1,12 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/landing/HeroSection.astro";
+import FeaturesSection from "../components/landing/FeaturesSection.astro";
+
+export const prerender = true;
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Fitness Log – Planuj. Trenuj. Progresuj.">
+  <HeroSection />
+  <FeaturesSection />
 </Layout>

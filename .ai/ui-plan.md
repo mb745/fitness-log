@@ -26,18 +26,21 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 ### 2.1 Widoki publiczne
 
 #### Landing Page `/`
+
 - **Cel**: Konwersja do rejestracji, prezentacja wartości
 - **Komponenty**: Hero z CTA, FeatureCard×3
 - **Kluczowe info**: Opis wartości ("Planuj. Trenuj. Progresuj."), 3 główne funkcje
 - **Dostępność**: Skip link, alt texts, focus states
 
 #### Login `/login`
+
 - **Cel**: Autoryzacja użytkowników
 - **Komponenty**: Form (email, hasło), Button z loading state, Toast
 - **Bezpieczeństwo**: Rate limiting (API), brak ujawniania błędnego pola, ARIA live regions
 - **US**: US-002
 
 #### Register `/register`
+
 - **Cel**: Rejestracja nowych użytkowników
 - **Komponenty**: Form (email, hasło, potwierdzenie), PasswordStrengthIndicator, Checkbox
 - **Przepływ**: Register → Auto-login → POST /api/v1/profile → Dashboard
@@ -46,6 +49,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 ### 2.2 Widoki chronione
 
 #### Dashboard `/dashboard`
+
 - **Cel**: Centralny hub, szybki start treningu, przegląd statusu
 - **Sekcje**:
   - Hero card: Najbliższy trening + CTA "Rozpocznij teraz"
@@ -60,13 +64,14 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
   - Loading: Skeleton dla wszystkich sekcji
   - Pusty: "Brak planów. Utwórz pierwszy!" + CTA
   - Aktywny trening: Banner z progress bar
-- **Queries**: 
+- **Queries**:
   - GET /workout-sessions?status=scheduled&sort=scheduled_for&limit=1
   - GET /workout-sessions?status=in_progress&limit=1
   - GET /analytics/upcoming-workouts
 - **US**: US-008
 
 #### Workout Plans List `/plans`
+
 - **Cel**: Zarządzanie planami użytkownika
 - **Layout**: Grid 1 col (mobile), 2 cols (desktop)
 - **Kluczowe info**: Lista planów, wyróżnienie aktywnego (badge, border), dla każdego: nazwa, harmonogram (readable), liczba ćwiczeń
@@ -80,8 +85,9 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-005 (częściowo), US-006
 
 #### Create/Edit Workout Plan `/plans/new` | `/plans/:id/edit`
+
 - **Cel**: Kreator planu z wyborem ćwiczeń i konfiguracją
-- **Layout**: 
+- **Layout**:
   - Mobile: Wizard 4-step
   - Desktop: Single-page form z sekcjami
 - **Kroki Wizarda**:
@@ -96,6 +102,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-005, US-006
 
 #### Exercise Library Modal (kontekstowy modal)
+
 - **Kontekst**: TYLKO podczas tworzenia/edycji planu
 - **Cel**: Wyszukiwanie i wybór ćwiczeń
 - **Komponenty**: SearchInput (debounce 300ms), FilterDropdown×2 (grupa, typ), VirtualizedExerciseList, ExerciseCard
@@ -109,6 +116,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-004
 
 #### Exercise Detail Modal
+
 - **Trigger**: Click na ExerciseCard
 - **Sekcje**:
   - Hero: nazwa, ilustracja duża
@@ -120,6 +128,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-004
 
 #### Calendar `/calendar`
+
 - **Cel**: Przegląd treningów w kontekście czasowym
 - **Widoki**: Miesięczny (desktop default), Tygodniowy (mobile default) z toggle
 - **Komponenty**: Calendar (custom Shadcn lub react-big-calendar), CalendarEvent, SessionDetailsPanel
@@ -137,23 +146,26 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-007
 
 #### Active Workout `/workout/:id/active`
+
 - **Cel**: Wykonywanie treningu - NAJWAŻNIEJSZY WIDOK
 - **Layout struktura**:
+
   ```
   [Fixed Header]
     Progress bar (12/20 serii)
     Przycisk "Porzuć"
-  
+
   [Scrollable Content]
     Timer przerw (sticky gdy aktywny)
     Lista ćwiczeń (vertical scroll)
       - Bieżące (wyróżnione, auto-scroll)
       - Poprzednie (collapsed)
       - Następne (preview)
-  
+
   [Fixed Footer mobile]
     "Zakończ trening"
   ```
+
 - **SessionSetRow** (kluczowy):
   - Inputs: Reps, Weight (kg)
   - Status: pending | completed | skipped
@@ -177,6 +189,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-009, US-010, US-011, US-012, US-013, US-014
 
 #### Progression Modal (non-dismissible)
+
 - **Trigger**: Auto po zakończeniu treningu
 - **Sekcje**:
   1. Podsumowanie: czas, serie, wolumen
@@ -194,6 +207,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-015
 
 #### History `/history`
+
 - **Cel**: Przegląd wykonanych i porzuconych treningów
 - **Layout**: TYLKO lista chronologiczna (nie kalendarz)
 - **Komponenty**: WorkoutHistoryCard×N, FilterBar, EmptyState, InfiniteScroll
@@ -205,6 +219,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-017
 
 #### Workout Session Details `/history/:sessionId`
+
 - **Cel**: Szczegółowy widok pojedynczej sesji
 - **Komponenty**: SessionHeader, ExerciseResultsTable×N, StagnationBadge
 - **Tabela serii**:
@@ -216,6 +231,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
   ```
 
 #### Stagnation Alert Modal
+
 - **Trigger**: Click badge "Stagnacja"
 - **Cel**: Analiza ostatnich 5 treningów + sugestie
 - **Sekcje**:
@@ -231,6 +247,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 - **US**: US-016
 
 #### Profile `/profile`
+
 - **Cel**: Zarządzanie danymi, preferencjami, kontem
 - **Layout**: Tabs (desktop), Accordion (mobile)
 - **Sekcje**:
@@ -246,6 +263,7 @@ Fitness Log to aplikacja webowa do planowania i rejestrowania treningów siłowy
 ## 3. Mapa podróży użytkownika
 
 ### 3.1 Onboarding nowego użytkownika
+
 ```
 Landing → [Zarejestruj się] → Register → Submit
   ↓
@@ -263,6 +281,7 @@ Calendar (system auto-generuje sesje)
 ```
 
 ### 3.2 Typowy cykl treningu
+
 ```
 Dashboard → Widzi "Następny trening: Push - Dziś 18:00"
   ↓ [Rozpocznij teraz]
@@ -286,6 +305,7 @@ Dashboard (zaktualizowane statystyki)
 ```
 
 ### 3.3 Edycja istniejącego planu
+
 ```
 Plans List → [Edytuj] → Edit Plan (formularz z aktualnymi danymi)
   ↓ Zmienia target_sets
@@ -299,6 +319,7 @@ Plans List (zmieniony plan, przyszłe treningi zaktualizowane)
 ```
 
 ### 3.4 Obsługa stagnacji
+
 ```
 Active Workout → Wyniki podobne do ostatnich 4
   ↓ [Zakończenie]
@@ -319,6 +340,7 @@ Active Workout (zaktualizowany ciężar)
 ```
 
 ### 3.5 Blokada wielu treningów
+
 ```
 Active Workout (trening A in_progress) → Użytkownik wychodzi
   ↓
@@ -335,6 +357,7 @@ Modal: "Masz aktywny trening Push"
 ```
 
 ### 3.6 Automatyczny soft delete
+
 ```
 Plans List → Plan "Push" używany w 5 sesjach
   ↓ [Usuń]
@@ -353,12 +376,14 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 4.1 Nawigacja główna
 
 **Mobile (<768px)**: Bottom Navigation Bar (fixed)
+
 ```
 [Dashboard] [Plans] [Calendar] [History] [Profile]
    🏠        📋       📅         📊         👤
 ```
 
 **Desktop (≥768px)**: Sidebar (collapsible, default expanded)
+
 ```
 [Logo]
 ─────────
@@ -382,10 +407,12 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 4.3 Punkty wejścia do kluczowych akcji
 
 **Rozpoczęcie treningu** (tylko 2 miejsca):
+
 1. Dashboard: "Następny trening" card → "Rozpocznij teraz"
 2. Calendar: Click sesję scheduled → Panel → "Rozpocznij"
 
 **Tworzenie planu**:
+
 1. Plans List: FAB (+)
 2. Dashboard pusty: CTA "Utwórz pierwszy plan"
 
@@ -401,47 +428,57 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 5.1 Współdzielone komponenty
 
 **ExerciseCard**
+
 - Użycie: Biblioteka, plany, historia
 - Warianty: library (ilustracja + metadata + "Dodaj"), plan (nazwa + target + drag handle + edit/delete), history (nazwa + actual wyniki)
 
 **WorkoutPlanCard**
+
 - Użycie: Lista planów
 - Layout: Card z header (nazwa, badge), body (harmonogram, liczba ćwiczeń), footer (action buttons)
 
 **SessionSetRow**
+
 - Użycie: Aktywny trening
 - Props: set, setNumber, totalSets, previousResult, onComplete, onSkip
 - Optymalizacja: React.memo() z custom comparison
 
 **Timer**
+
 - Użycie: Przerwy w treningu
 - Stan: useReducer dla countdown
 - Side effects: Audio, ARIA live
 
 **ProgressBar**
+
 - Użycie: Aktywny trening, dashboard stats
 - Warianty: linear, circular
 - Props: completed, total, showLabel, segments (opcjonalnie kolorowe per ćwiczenie)
 
 **Calendar**
+
 - Użycie: Calendar view
 - Decyzja: Custom Shadcn vs react-big-calendar (do weryfikacji)
 - Wymagania: Responsive (weekly/monthly toggle), event rendering z statusem
 
 **Modal / Dialog**
+
 - Warianty: Dismissible (Shadcn default), Non-dismissible (custom: Progression), Bottom Sheet (mobile), Side Panel (desktop: Exercise Library)
 
 ### 5.2 Formularze
 
 **Form wrapper** (react-hook-form + Zod)
+
 - Features: Auto-save (configurable debounce), dirty tracking, inline validation, loading states
 
 **Input, Select, Textarea** (Shadcn/ui rozszerzenia)
+
 - Number input z +/- buttons
 - ARIA (aria-invalid, aria-describedby)
 - Touch targets min 44px
 
 **DatePicker, MultiSelectCheckbox, RadioGroup**
+
 - Pełna nawigacja klawiaturowa, clear labels
 
 ### 5.3 Layout components
@@ -466,6 +503,7 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ## 6. Responsywność i breakpointy
 
 ### Breakpoints (Tailwind)
+
 - xs: <640px (phone portrait)
 - sm: 640px (phone landscape)
 - **md: 768px** ← główny breakpoint mobile/desktop
@@ -475,18 +513,19 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 
 ### Adaptive patterns
 
-| Element | Mobile (<768px) | Desktop (≥768px) |
-|---------|-----------------|------------------|
-| Nawigacja | Bottom bar | Sidebar |
-| Dashboard | 1 kolumna | 2-3 kolumny |
-| Kalendarz | Tygodniowy | Miesięczny |
-| Formularz planu | Wizard | Single-page |
-| Modal | Bottom sheet | Centered |
-| Exercise Library | Fullscreen | Side panel 40% |
-| Timer | Fullscreen overlay | Sticky panel |
-| SessionSetRow | Vertical stack | Horizontal |
+| Element          | Mobile (<768px)    | Desktop (≥768px) |
+| ---------------- | ------------------ | ---------------- |
+| Nawigacja        | Bottom bar         | Sidebar          |
+| Dashboard        | 1 kolumna          | 2-3 kolumny      |
+| Kalendarz        | Tygodniowy         | Miesięczny       |
+| Formularz planu  | Wizard             | Single-page      |
+| Modal            | Bottom sheet       | Centered         |
+| Exercise Library | Fullscreen         | Side panel 40%   |
+| Timer            | Fullscreen overlay | Sticky panel     |
+| SessionSetRow    | Vertical stack     | Horizontal       |
 
 ### Touch targets
+
 - Minimum: 44×44px (Apple) / 48×48px (Material)
 - Active Workout buttons: 60px height
 - Inputs: 48px min
@@ -495,12 +534,14 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ## 7. Stany aplikacji i obsługa błędów
 
 ### 7.1 Loading states
+
 - Initial: Skeleton screens (matching layout)
 - Action: Spinner w przycisku + disabled
 - Infinite scroll: Loader na dole
 - Background sync: Timestamp "Zsynchronizowano 2 min temu"
 
 ### 7.2 Empty states
+
 - Plans: "Jeszcze nie masz planów. Utwórz pierwszy!" + CTA
 - Calendar: "Brak treningów. Aktywuj plan."
 - History: "Nie wykonałeś jeszcze treningów."
@@ -535,11 +576,13 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 8.1 Kolor i kontrast
 
 **Minimalne kontrasty**:
+
 - Normalny tekst (<18pt): 4.5:1
 - Duży tekst (≥18pt): 3:1
 - UI components: 3:1
 
 **Status colors** (z sufficient contrast):
+
 - Scheduled: hsl(210, 100%, 45%) niebieski
 - In Progress: hsl(30, 100%, 50%) pomarańczowy + pulsing
 - Completed: hsl(145, 60%, 40%) zielony
@@ -563,14 +606,16 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 - **Skróty**: Tab/Shift+Tab (nawigacja), Enter/Space (aktywacja), Escape (zamknij modal jeśli dismissible), ↑↓ (alternatywa drag-and-drop)
 
 **Drag-and-drop alternatywa**:
+
 ```html
-<button aria-label="Przenieś ćwiczenie w górę" onClick={moveUp}>↑</button>
-<button aria-label="Przenieś ćwiczenie w dół" onClick={moveDown}>↓</button>
+<button aria-label="Przenieś ćwiczenie w górę" onClick="{moveUp}">↑</button>
+<button aria-label="Przenieś ćwiczenie w dół" onClick="{moveDown}">↓</button>
 ```
 
 ### 8.4 ARIA attributes
 
 **Timer**:
+
 ```html
 <div role="timer" aria-live="polite" aria-atomic="true">
   <span aria-label="Pozostało 90 sekund">1:30</span>
@@ -578,31 +623,31 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ```
 
 **Progress bar**:
+
 ```html
-<div 
-  role="progressbar" 
-  aria-valuenow={12} 
-  aria-valuemin={0} 
-  aria-valuemax={20}
+<div
+  role="progressbar"
+  aria-valuenow="{12}"
+  aria-valuemin="{0}"
+  aria-valuemax="{20}"
   aria-label="Postęp treningu: 12 z 20 serii ukończonych"
 />
 ```
 
 **Przyciski z kontekstem**:
+
 ```html
-<button aria-label="Oznacz serię 1 z 4 jako ukończoną">
-  Zakończ serię
-</button>
+<button aria-label="Oznacz serię 1 z 4 jako ukończoną">Zakończ serię</button>
 ```
 
 **Live regions**:
+
 ```html
-<div role="status" aria-live="polite" aria-atomic="true">
-  {/* "Seria 3 ukończona. Następna seria: 4" */}
-</div>
+<div role="status" aria-live="polite" aria-atomic="true">{/* "Seria 3 ukończona. Następna seria: 4" */}</div>
 ```
 
 **Modals**:
+
 ```html
 <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
   <h2 id="dialog-title">Sugestie progresji</h2>
@@ -612,6 +657,7 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 8.5 Screen reader support
 
 **Announcements** (aria-live):
+
 - "Seria ukończona"
 - "Timer przerwy: 90 sekund"
 - "Trening zakończony. Czas: 45 minut"
@@ -624,6 +670,7 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 ### 8.6 Focus management
 
 **Po akcjach**:
+
 - Ukończenie serii → focus na następnej
 - Otwarcie modal → focus na pierwszy interactive w modal
 - Zamknięcie modal → focus na element który otworzył
@@ -639,11 +686,12 @@ Plans List refresh → Plan ukryty (domyślnie tylko active)
 - **Protected**: Wszystkie pozostałe
 
 **Implementacja**:
+
 ```tsx
 // Astro middleware
 if (!PUBLIC_ROUTES.includes(url.pathname)) {
   const session = await supabase.auth.getSession();
-  if (!session) return redirect('/login');
+  if (!session) return redirect("/login");
   context.locals.user = session.user;
 }
 
@@ -651,7 +699,7 @@ if (!PUBLIC_ROUTES.includes(url.pathname)) {
 function useAuth() {
   const { user, loading } = useContext(AuthContext);
   useEffect(() => {
-    if (!loading && !user) window.location.href = '/login';
+    if (!loading && !user) window.location.href = "/login";
   }, [user, loading]);
   return { user, loading };
 }
@@ -664,6 +712,7 @@ function useAuth() {
 - Timeout: 1h (Supabase default), auto-refresh w tle
 
 **Wygaśnięcie podczas treningu**:
+
 1. Wykryj 401
 2. Attempt refresh
 3. Jeśli fail: zapisz stan localStorage → modal → redirect /login
@@ -691,11 +740,10 @@ function useAuth() {
 
 - Astro: Auto per-route
 - React lazy:
+
 ```tsx
-const ExerciseLibraryModal = lazy(() => import('./ExerciseLibraryModal'));
-<Suspense fallback={<Skeleton />}>
-  {showLibrary && <ExerciseLibraryModal />}
-</Suspense>
+const ExerciseLibraryModal = lazy(() => import("./ExerciseLibraryModal"));
+<Suspense fallback={<Skeleton />}>{showLibrary && <ExerciseLibraryModal />}</Suspense>;
 ```
 
 ### 10.2 Image optimization
@@ -713,18 +761,25 @@ const ExerciseLibraryModal = lazy(() => import('./ExerciseLibraryModal'));
 ### 10.4 React optimization
 
 **SessionSetRow memo**:
+
 ```tsx
 const SessionSetRow = React.memo(
-  ({ set, onComplete }) => { /* ... */ },
+  ({ set, onComplete }) => {
+    /* ... */
+  },
   (prev, next) => prev.set.id === next.set.id && prev.set.status === next.set.status
 );
 ```
 
 **useCallback**:
+
 ```tsx
-const handleComplete = useCallback((setId, data) => {
-  updateSet(setId, data);
-}, [updateSet]);
+const handleComplete = useCallback(
+  (setId, data) => {
+    updateSet(setId, data);
+  },
+  [updateSet]
+);
 ```
 
 **Rozdzielony stan**: Timer w osobnym context (nie trigger re-render serii)
@@ -755,20 +810,21 @@ src/lib/i18n/
 ```
 
 **Przykład pl.ts**:
+
 ```typescript
 export const pl = {
   common: {
-    save: 'Zapisz',
-    cancel: 'Anuluj',
-    delete: 'Usuń',
+    save: "Zapisz",
+    cancel: "Anuluj",
+    delete: "Usuń",
   },
   workout: {
-    start: 'Rozpocznij trening',
+    start: "Rozpocznij trening",
     status: {
-      scheduled: 'Zaplanowany',
-      inProgress: 'W trakcie',
-      completed: 'Ukończony',
-      abandoned: 'Porzucony',
+      scheduled: "Zaplanowany",
+      inProgress: "W trakcie",
+      completed: "Ukończony",
+      abandoned: "Porzucony",
     },
   },
 };
@@ -784,43 +840,43 @@ export const pl = {
 
 ## 12. Mapowanie User Stories na widoki
 
-| US | Widoki | Komponenty |
-|----|--------|-----------|
-| US-001 Rejestracja | Register | Form, Input, Button, Toast |
-| US-002 Logowanie | Login | Form, Input, Button, Toast |
-| US-003 Wylogowanie | Profile | Button, ConfirmDialog |
-| US-004 Biblioteka | ExerciseLibraryModal, ExerciseDetailModal | SearchInput, FilterDropdown, ExerciseCard, VolumeChart |
-| US-005 Tworzenie planu | CreatePlan | FormWizard, ExerciseLibraryModal, DraggableList |
-| US-006 Edycja planu | EditPlan | Form, ExerciseLibraryModal, DraggableList |
-| US-007 Kalendarz | Calendar | Calendar, SessionDetailsPanel |
-| US-008 Dashboard | Dashboard | HeroCard, ActiveWorkoutBanner, QuickStats |
-| US-009 Rozpoczęcie | Dashboard, Calendar → ActiveWorkout | Button, Modal |
-| US-010 Rejestracja serii | ActiveWorkout | SessionSetRow, Input |
-| US-011 Timer | ActiveWorkout | Timer (sticky) |
-| US-012 Progress | ActiveWorkout | ProgressBar (fixed) |
-| US-013 Zakończenie | ActiveWorkout → ProgressionModal | Button, ConfirmDialog, Modal |
-| US-014 Anulowanie | ActiveWorkout | Button, ConfirmDialog |
-| US-015 Progresja | ProgressionModal | Modal, Checkbox, Button |
-| US-016 Stagnacja | History, ActiveWorkout → StagnationModal | Badge, Modal, Chart |
-| US-017 Historia | History, SessionDetails | WorkoutHistoryCard, FilterBar |
-| US-018 Profil | Profile | Form, Tabs, Input |
-| US-019 Bezpieczeństwo | Middleware, useAuth | - |
-| US-020 Metryki | Backend (poza UI) | - |
+| US                       | Widoki                                    | Komponenty                                             |
+| ------------------------ | ----------------------------------------- | ------------------------------------------------------ |
+| US-001 Rejestracja       | Register                                  | Form, Input, Button, Toast                             |
+| US-002 Logowanie         | Login                                     | Form, Input, Button, Toast                             |
+| US-003 Wylogowanie       | Profile                                   | Button, ConfirmDialog                                  |
+| US-004 Biblioteka        | ExerciseLibraryModal, ExerciseDetailModal | SearchInput, FilterDropdown, ExerciseCard, VolumeChart |
+| US-005 Tworzenie planu   | CreatePlan                                | FormWizard, ExerciseLibraryModal, DraggableList        |
+| US-006 Edycja planu      | EditPlan                                  | Form, ExerciseLibraryModal, DraggableList              |
+| US-007 Kalendarz         | Calendar                                  | Calendar, SessionDetailsPanel                          |
+| US-008 Dashboard         | Dashboard                                 | HeroCard, ActiveWorkoutBanner, QuickStats              |
+| US-009 Rozpoczęcie       | Dashboard, Calendar → ActiveWorkout       | Button, Modal                                          |
+| US-010 Rejestracja serii | ActiveWorkout                             | SessionSetRow, Input                                   |
+| US-011 Timer             | ActiveWorkout                             | Timer (sticky)                                         |
+| US-012 Progress          | ActiveWorkout                             | ProgressBar (fixed)                                    |
+| US-013 Zakończenie       | ActiveWorkout → ProgressionModal          | Button, ConfirmDialog, Modal                           |
+| US-014 Anulowanie        | ActiveWorkout                             | Button, ConfirmDialog                                  |
+| US-015 Progresja         | ProgressionModal                          | Modal, Checkbox, Button                                |
+| US-016 Stagnacja         | History, ActiveWorkout → StagnationModal  | Badge, Modal, Chart                                    |
+| US-017 Historia          | History, SessionDetails                   | WorkoutHistoryCard, FilterBar                          |
+| US-018 Profil            | Profile                                   | Form, Tabs, Input                                      |
+| US-019 Bezpieczeństwo    | Middleware, useAuth                       | -                                                      |
+| US-020 Metryki           | Backend (poza UI)                         | -                                                      |
 
 ## 13. Punkty bólu użytkownika i rozwiązania UI
 
-| Problem | Rozwiązanie UI |
-|---------|---------------|
-| Utrata motywacji | Progression Modal non-dismissible z konkretnymi sugestiami, alert stagnacji |
-| Zapominanie o treningu | Banner sticky na Dashboard, badge na nav, blokada nowego, localStorage persistence |
-| Trudność doboru ciężarów | "Ostatnio: 3×12×50kg" w Active Workout, volume chart w Exercise Detail, auto sugestie |
-| Gubienie się w długim treningu | Progress bar 12/20, auto-scroll do bieżącego, wyróżnienie aktualnej sekcji |
-| Zapominanie o przerwach | Auto-start timer, sticky panel, audio notification, +30s/-30s |
-| Frustracja przy usuwaniu | Auto soft delete przy 409 BEZ komunikatu, seamless UX |
-| Brak świadomości postępów | Quick stats na Dashboard, historia z filtrami, volume charts |
-| Edycja na małym ekranie | Wizard mobile, duże touch 60px, drag+strzałki alternatywa, auto-save |
-| Stres utraty danych | Optimistic updates, auto-save 500ms, localStorage queue, offline banner, periodic sync 30s |
-| Brak jasności harmonogramu | Hero card z konkretną datą, mini kalendarz, readable format harmonogramu |
+| Problem                        | Rozwiązanie UI                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| Utrata motywacji               | Progression Modal non-dismissible z konkretnymi sugestiami, alert stagnacji                |
+| Zapominanie o treningu         | Banner sticky na Dashboard, badge na nav, blokada nowego, localStorage persistence         |
+| Trudność doboru ciężarów       | "Ostatnio: 3×12×50kg" w Active Workout, volume chart w Exercise Detail, auto sugestie      |
+| Gubienie się w długim treningu | Progress bar 12/20, auto-scroll do bieżącego, wyróżnienie aktualnej sekcji                 |
+| Zapominanie o przerwach        | Auto-start timer, sticky panel, audio notification, +30s/-30s                              |
+| Frustracja przy usuwaniu       | Auto soft delete przy 409 BEZ komunikatu, seamless UX                                      |
+| Brak świadomości postępów      | Quick stats na Dashboard, historia z filtrami, volume charts                               |
+| Edycja na małym ekranie        | Wizard mobile, duże touch 60px, drag+strzałki alternatywa, auto-save                       |
+| Stres utraty danych            | Optimistic updates, auto-save 500ms, localStorage queue, offline banner, periodic sync 30s |
+| Brak jasności harmonogramu     | Hero card z konkretną datą, mini kalendarz, readable format harmonogramu                   |
 
 ## 14. Podsumowanie kluczowych decyzji
 
@@ -843,6 +899,7 @@ export const pl = {
 ## 15. Następne kroki implementacji
 
 ### Faza 1: Fundament (Tydzień 1-2)
+
 - Setup: Astro + React + Tailwind + Shadcn/ui
 - Middleware autoryzacji + useAuth
 - Service layer (struktura wszystkich serwisów)
@@ -851,6 +908,7 @@ export const pl = {
 - Protected route template
 
 ### Faza 2: Core CRUD (Tydzień 3-4)
+
 - Dashboard (skeleton)
 - Workout Plans List + Create/Edit
 - Profile (basic)
@@ -858,12 +916,14 @@ export const pl = {
 - Integracja biblioteki z planem
 
 ### Faza 3: Kalendarz i Historia (Tydzień 5)
+
 - Calendar (weekly/monthly)
 - Session details panel
 - History list + filters
 - Session details view
 
 ### Faza 4: Active Workout (Tydzień 6-7) - **PRIORYTET**
+
 - Layout + SessionSetRow
 - Timer component
 - Progress bar
@@ -872,12 +932,14 @@ export const pl = {
 - Blokada wielu treningów
 
 ### Faza 5: Progresja (Tydzień 8)
+
 - Progression Modal (non-dismissible)
 - Stagnation Alert Modal
 - Volume charts (recharts)
 - Apply logic (PATCH)
 
 ### Faza 6: Polish (Tydzień 9-10)
+
 - Accessibility audit (WCAG 2.1 AA)
 - Responsive testing
 - Error handling edge cases
@@ -886,6 +948,7 @@ export const pl = {
 - Performance (virtual scrolling, memo, lazy)
 
 ### Faza 7: Testing (Tydzień 11-12)
+
 - E2E (Playwright)
 - UAT
 - Bug fixes
@@ -893,5 +956,3 @@ export const pl = {
 - Production deployment
 
 ---
-
-

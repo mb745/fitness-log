@@ -1,0 +1,21 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AuthCard from "../components/auth/AuthCard.astro";
+import { RegisterForm } from "../components/auth/RegisterForm";
+
+export const prerender = false;
+---
+
+<Layout title="Rejestracja – Fitness Log">
+  <section class="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-16">
+    <AuthCard
+      title="Utwórz konto"
+      subtitle="Dołącz do Fitness Log za darmo"
+      footerLabel="Masz już konto?"
+      footerHref="/login"
+      footerLinkText="Zaloguj się"
+    >
+      <RegisterForm />
+    </AuthCard>
+  </section>
+</Layout>

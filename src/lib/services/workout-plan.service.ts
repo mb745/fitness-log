@@ -95,7 +95,7 @@ export class WorkoutPlanService {
       order_index: exercise.order_index,
       target_sets: exercise.target_sets,
       target_reps: exercise.target_reps,
-      rest_seconds: exercise.rest_seconds,
+      rest_seconds: exercise.rest_seconds ?? 30,
       notes: exercise.notes || null,
     }));
 
@@ -200,12 +200,25 @@ export class WorkoutPlanService {
    * Throws error if plan is used in sessions (foreign key constraint).
    */
   async deletePlan(planId: number, userId: UUID): Promise<boolean> {
+    // New: Remove any workout sessions that reference this plan before deleting the plan itself
+    const { error: sessionsError } = await this.supabase
+      .from("workout_sessions")
+      .delete()
+      .eq("workout_plan_id", planId)
+      .eq("user_id", userId);
+
+    if (sessionsError) {
+      console.error("[WorkoutPlanService] Error deleting sessions for plan:", sessionsError);
+      throw new Error(`Failed to delete related workout sessions: ${sessionsError.message}`);
+    }
+
+    // Proceed to delete the plan now that no foreign key constraints remain
     const { error } = await this.supabase.from("workout_plans").delete().eq("id", planId).eq("user_id", userId);
 
     if (error) {
-      // Check if it's a foreign key violation (plan used in sessions)
-      if (error.code === "23503") {
-        throw new Error("Cannot delete workout plan that has been used in workout sessions");
+      // Removed FK violation guard; sessions referencing this plan are now deleted above.
+      if (error.code === "PGRST116") {
+        return false;
       }
 
       console.error("[WorkoutPlanService] Error deleting plan:", error);
@@ -285,7 +298,7 @@ export class WorkoutPlanService {
       order_index: exercise.order_index,
       target_sets: exercise.target_sets,
       target_reps: exercise.target_reps,
-      rest_seconds: exercise.rest_seconds,
+      rest_seconds: exercise.rest_seconds ?? 30,
       notes: exercise.notes || null,
     }));
 

@@ -1,0 +1,41 @@
+---
+import { Button } from "@/components/ui/button";
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const { title = "Planuj. Trenuj. Progresuj.", subtitle = "Twoja podróż fitness zaczyna się tutaj." } =
+  Astro.props as Props;
+---
+
+<section
+  class="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 via-background to-background px-4 text-center"
+>
+  <h1 class="max-w-3xl text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+    {title}
+  </h1>
+  <p class="mt-4 max-w-xl text-lg text-muted-foreground md:text-xl">
+    {subtitle}
+  </p>
+  <!-- CTA Button -->
+  <Button variant="default" size="lg" asChild className="mt-8">
+    <a href="/register" aria-label="Zarejestruj się – rozpocznij">Rozpocznij za darmo</a>
+  </Button>
+
+  <p class="mt-4 text-sm text-muted-foreground">
+    Masz już konto?
+    <a href="/login" class="font-medium text-primary hover:underline"> Zaloguj się</a>
+  </p>
+</section>
+
+<style is:global>
+  /* Ensure gradient covers full width */
+  section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(var(--tw-gradient-stops));
+  }
+</style>

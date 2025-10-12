@@ -1,0 +1,18 @@
+---
+import FeatureCard from "./FeatureCard.astro";
+import type { Feature } from "@/content/features";
+import { features } from "@/content/features";
+
+interface Props {
+  features?: Feature[];
+}
+
+const { features: propsFeatures = features } = Astro.props as Props;
+---
+
+<section class="mx-auto max-w-6xl px-4 py-16">
+  <h2 class="mb-12 text-center text-3xl font-bold tracking-tight sm:text-4xl">Dlaczego warto wybrać Fitness Log?</h2>
+  <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    {propsFeatures.map((feature) => <FeatureCard feature={feature} />)}
+  </div>
+</section>

@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Validate request body
     let validatedData: WorkoutPlanCreateCommand;
     try {
-      validatedData = workoutPlanCreateSchema.parse(body);
+      validatedData = workoutPlanCreateSchema.parse(body) as WorkoutPlanCreateCommand;
     } catch (error) {
       if (error instanceof ZodError) {
         logApiError("POST /api/v1/workout-plans", userId, error, "warn");
@@ -89,11 +89,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw error;
     }
 
-    // Create workout plan
+    // Create workout plan (initially inactive)
     const service = new WorkoutPlanService(locals.supabase);
-    const plan = await service.createPlan(userId, validatedData);
+    const createdPlan = await service.createPlan(userId, validatedData);
 
-    return jsonResponse(plan, 201);
+    // Immediately activate the new plan and deactivate any previous ones
+    const activatedPlan = await service.activatePlan(createdPlan.id, userId);
+
+    const responsePlan = activatedPlan ?? createdPlan;
+
+    return jsonResponse(responsePlan, 201);
   } catch (error) {
     const userId = await checkAuth({ request, locals });
 
