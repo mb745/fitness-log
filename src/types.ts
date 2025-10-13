@@ -106,6 +106,8 @@ export type WorkoutSessionsQueryParams = PaginationParams & {
   status?: WorkoutSessionStatus;
   from?: ISODateString;
   to?: ISODateString;
+  /** Filter sessions by workout plan */
+  workout_plan_id?: number;
 };
 
 export type WorkoutHistoryQueryParams = PaginationParams; // history endpoint is paginated

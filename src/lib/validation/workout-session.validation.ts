@@ -54,6 +54,10 @@ export const sessionQuerySchema = z
     page: z.number().int().positive().optional(),
     page_size: z.number().int().min(1).max(100).optional(),
     sort: z.string().optional(),
+    workout_plan_id: z.preprocess(
+      (val) => (val === undefined ? undefined : Number(val)),
+      z.number().int().positive({ message: "workout_plan_id must be a positive integer" }).optional()
+    ),
   })
   .transform((data) => {
     // Validate status enum if provided
@@ -63,6 +67,9 @@ export const sessionQuerySchema = z
     const from = data.from ? isoDateString.optional().parse(data.from) : undefined;
     const to = data.to ? isoDateString.optional().parse(data.to) : undefined;
 
+    const sort = data.sort;
+    const workout_plan_id = data.workout_plan_id;
+
     return {
       status,
       from,
@@ -70,6 +77,7 @@ export const sessionQuerySchema = z
       page: data.page,
       page_size: data.page_size,
       sort: data.sort,
+      workout_plan_id,
     };
   });
 

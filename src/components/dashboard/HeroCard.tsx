@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
 interface HeroCardProps {
-  session: WorkoutSessionDTO;
+  session: WorkoutSessionDTO & { plan_name?: string };
   onStart: () => Promise<void>;
   isStarting?: boolean;
 }
@@ -14,12 +14,16 @@ const HeroCard: React.FC<HeroCardProps> = ({ session, onStart, isStarting }) => 
     return <Skeleton className="h-32 w-full" />;
   }
 
-  const scheduledDate = new Date(session.scheduled_for).toLocaleString();
+  const scheduledDate = new Date(session.scheduled_for).toLocaleDateString();
 
   return (
-    <div className="border rounded-lg p-4 bg-background">
-      <h2 className="text-xl font-semibold mb-2">{session.plan_name ?? "Workout"}</h2>
-      <p className="text-muted-foreground mb-4">{scheduledDate}</p>
+    <div className="border rounded-lg p-4 bg-background space-y-1">
+      <p>
+        <span className="font-medium">Nazwa treningu:</span> {session.plan_name ?? "Trening"}
+      </p>
+      <p className="text-muted-foreground">
+        <span className="font-medium">Data najbliższej sesji:</span> {scheduledDate}
+      </p>
       <Button onClick={onStart} disabled={isStarting}>
         {isStarting ? "Starting..." : "Rozpocznij"}
       </Button>

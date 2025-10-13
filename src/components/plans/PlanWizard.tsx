@@ -94,13 +94,7 @@ const PlanWizardInner: React.FC = () => {
   return (
     <div className="max-w-xl mx-auto py-6">
       {/* StepperHeader */}
-      <ol className="flex mb-6">
-        {steps.map((label, idx) => (
-          <li key={label} className={`flex-1 text-center ${idx === stepIdx ? "font-bold" : "text-muted-foreground"}`}>
-            {label}
-          </li>
-        ))}
-      </ol>
+      <h2 className="mb-6 text-center text-lg font-semibold">Kreator planu treningowego ({stepIdx + 1}/3)</h2>
 
       {/*
         Submit behavior:

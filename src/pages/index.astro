@@ -1,12 +1,12 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import PublicLayout from "../layouts/PublicLayout.astro";
 import HeroSection from "../components/landing/HeroSection.astro";
 import FeaturesSection from "../components/landing/FeaturesSection.astro";
 
 export const prerender = true;
 ---
 
-<Layout title="Fitness Log – Planuj. Trenuj. Progresuj.">
+<PublicLayout title="Fitness Log – Planuj. Trenuj. Progresuj.">
   <HeroSection />
   <FeaturesSection />
-</Layout>
+</PublicLayout>

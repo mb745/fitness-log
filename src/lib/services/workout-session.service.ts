@@ -42,6 +42,11 @@ export class WorkoutSessionService {
       query = query.eq("status", params.status);
     }
 
+    // Filter by workout_plan_id if provided
+    if (params.workout_plan_id) {
+      query = query.eq("workout_plan_id", params.workout_plan_id);
+    }
+
     // Apply date range filters if provided
     if (params.from) {
       query = query.gte("scheduled_for", params.from);

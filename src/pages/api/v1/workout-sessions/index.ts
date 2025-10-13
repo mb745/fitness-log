@@ -30,9 +30,11 @@ export const prerender = false;
  * Errors: 400 (validation), 401 (unauthorized), 500 (server error)
  */
 export async function GET(context: APIContext): Promise<Response> {
+  let userId: string | null = null;
+
   try {
     // Check authentication
-    const userId = await checkAuth(context);
+    userId = await checkAuth(context);
     if (!userId) {
       return errorResponse("Unauthorized", "Authentication required", 401);
     }
@@ -46,6 +48,7 @@ export async function GET(context: APIContext): Promise<Response> {
       status: params.get("status") || undefined,
       from: params.get("from") || undefined,
       to: params.get("to") || undefined,
+      workout_plan_id: params.get("workout_plan_id") ? Number(params.get("workout_plan_id")) : undefined,
       page,
       page_size: pageSize,
       sort: params.get("sort") || undefined,
@@ -63,7 +66,7 @@ export async function GET(context: APIContext): Promise<Response> {
 
     return jsonResponse(result, 200);
   } catch (error) {
-    logApiError("GET /api/v1/workout-sessions", userId, error, "error");
+    logApiError("GET /api/v1/workout-sessions", userId || undefined, error, "error");
     return errorResponse("Internal Server Error", "An unexpected error occurred. Please try again later.", 500);
   }
 }

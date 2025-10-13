@@ -10,7 +10,6 @@ import HeroCard from "./HeroCard";
 import ActiveWorkoutBanner from "./ActiveWorkoutBanner";
 import QuickStatsGrid from "./QuickStatsGrid";
 import WorkoutSummaryCard from "./WorkoutSummaryCard";
-import { Button } from "../ui/button";
 
 const DashboardPageInner: React.FC = () => {
   const { data: activeSession } = useActiveWorkout();
@@ -31,16 +30,7 @@ const DashboardPageInner: React.FC = () => {
 
   return (
     <div className="container py-8 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">Panel użytkownika</h1>
-      {/* Navigation buttons */}
-      <div className="flex gap-3 mb-4">
-        <Button asChild size="sm">
-          <a href="/plans/new">Nowy plan</a>
-        </Button>
-        <Button variant="secondary" asChild size="sm">
-          <a href="/plans">Moje plany</a>
-        </Button>
-      </div>
+      {/* Upcoming workout info - removed duplicate lightweight card (HeroCard covers it) */}
 
       {activeSession && (
         <ActiveWorkoutBanner

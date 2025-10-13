@@ -98,6 +98,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const responsePlan = activatedPlan ?? createdPlan;
 
+    // Schedule sessions 3 months ahead
+    await service.scheduleFutureSessions(responsePlan, userId);
+
     return jsonResponse(responsePlan, 201);
   } catch (error) {
     const userId = await checkAuth({ request, locals });

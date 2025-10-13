@@ -29,8 +29,7 @@ function SortableItem({ id, idx }: { id: number; idx: number }) {
   });
 
   const updateField = (field: "target_sets" | "target_reps" | "rest_seconds", value: number) => {
-    const next = [...draft.exercises];
-    (next[idx] as Record<string, unknown>)[field] = value;
+    const next = draft.exercises.map((exercise, i) => (i === idx ? { ...exercise, [field]: value } : exercise));
     setExercises(next);
   };
 
@@ -57,6 +56,7 @@ function SortableItem({ id, idx }: { id: number; idx: number }) {
             type="button"
             aria-label="Usuń ćwiczenie"
             className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={remove}
           >
             Usuń
@@ -70,8 +70,10 @@ function SortableItem({ id, idx }: { id: number; idx: number }) {
             id={`sets-${idx}`}
             type="number"
             min={1}
+            step={1}
             value={ex.target_sets}
             onChange={(e) => updateField("target_sets", Number(e.target.value))}
+            onPointerDown={(e) => e.stopPropagation()}
           />
         </label>
         <label htmlFor={`reps-${idx}`}>
@@ -80,8 +82,10 @@ function SortableItem({ id, idx }: { id: number; idx: number }) {
             id={`reps-${idx}`}
             type="number"
             min={1}
+            step={1}
             value={ex.target_reps}
             onChange={(e) => updateField("target_reps", Number(e.target.value))}
+            onPointerDown={(e) => e.stopPropagation()}
           />
         </label>
         <label htmlFor={`rest-${idx}`}>
@@ -90,8 +94,10 @@ function SortableItem({ id, idx }: { id: number; idx: number }) {
             id={`rest-${idx}`}
             type="number"
             min={0}
+            step={30}
             value={ex.rest_seconds ?? 30}
             onChange={(e) => updateField("rest_seconds", Number(e.target.value))}
+            onPointerDown={(e) => e.stopPropagation()}
           />
         </label>
       </div>
@@ -126,7 +132,7 @@ export const StepExercises: React.FC = () => {
 
   return (
     <div>
-      <Button type="button" onClick={() => setModalOpen(true)}>
+      <Button className="mb-4" type="button" onClick={() => setModalOpen(true)}>
         Dodaj ćwiczenia
       </Button>
 

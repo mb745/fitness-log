@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { WorkoutSessionsListResponse, WorkoutSessionDTO, UpcomingWorkoutDTO } from "../../types";
+import type {
+  WorkoutSessionsListResponse,
+  WorkoutSessionDTO,
+  UpcomingWorkoutDTO,
+  WorkoutPlansListResponse,
+} from "../../types";
 
 export interface QuickStatsVM {
   weeklyCount: number;
@@ -37,10 +42,22 @@ export function useUpcomingWorkout() {
   return useQuery({
     queryKey: ["workout", "upcoming"],
     queryFn: async () => {
-      const data = await fetchJson<WorkoutSessionsListResponse>(
-        "/api/v1/workout-sessions?status=scheduled&sort=scheduled_for&limit=1"
+      // First fetch the active workout plan (there should be at most one)
+      const plansRes = await fetchJson<WorkoutPlansListResponse>("/api/v1/workout-plans?is_active=true&page_size=1");
+
+      const activePlan = plansRes.data[0];
+      if (!activePlan) return undefined;
+
+      // Fetch upcoming sessions for this plan only, sorted ascending by scheduled_for
+      const sessionsRes = await fetchJson<WorkoutSessionsListResponse>(
+        `/api/v1/workout-sessions?status=scheduled&sort=scheduled_for&limit=1&workout_plan_id=${activePlan.id}`
       );
-      return data.data[0] as WorkoutSessionDTO | undefined;
+
+      // Attach plan name to response for display convenience
+      const session = sessionsRes.data[0] as (WorkoutSessionDTO & { plan_name?: string }) | undefined;
+      if (session) session.plan_name = activePlan.name;
+
+      return session;
     },
     staleTime: 15_000,
   });

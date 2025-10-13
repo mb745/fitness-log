@@ -434,4 +434,49 @@ export class WorkoutPlanService {
 
     return data as WorkoutPlanDTO;
   }
+
+  /**
+   * Generate and insert scheduled workout sessions for the given plan for the next 3 months.
+   * This is invoked right after creating & activating a plan.
+   */
+  async scheduleFutureSessions(plan: WorkoutPlanDTO, userId: UUID): Promise<void> {
+    const startDate = new Date();
+    // Start scheduling from tomorrow to avoid creating a past session if user creates plan late in the day
+    startDate.setDate(startDate.getDate() + 1);
+    startDate.setHours(8, 0, 0, 0); // default 08:00 local
+
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 3); // 3 months window
+
+    const sessionDates: string[] = [];
+
+    if (plan.schedule_type === "weekly" && plan.schedule_days && plan.schedule_days.length > 0) {
+      const daySet = new Set<number>(plan.schedule_days);
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        if (daySet.has(d.getDay())) {
+          sessionDates.push(new Date(d).toISOString());
+        }
+      }
+    } else if (plan.schedule_type === "interval" && plan.schedule_interval_days) {
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + plan.schedule_interval_days)) {
+        sessionDates.push(new Date(d).toISOString());
+      }
+    }
+
+    if (sessionDates.length === 0) return;
+
+    const inserts = sessionDates.map((iso) => ({
+      user_id: userId,
+      workout_plan_id: plan.id,
+      scheduled_for: iso,
+      status: "scheduled" as const,
+    }));
+
+    const { error } = await this.supabase.from("workout_sessions").insert(inserts);
+
+    if (error) {
+      console.error("[WorkoutPlanService] Error scheduling future sessions:", error);
+      // Do not fail plan creation if scheduling fails; log and continue
+    }
+  }
 }

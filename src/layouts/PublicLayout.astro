@@ -1,6 +1,5 @@
 ---
 import "../styles/global.css";
-import TopMenu from "../components/TopMenu.astro";
 
 interface Props {
   title?: string;
@@ -26,9 +25,7 @@ const { title = "10x Astro Starter", noindex = false } = Astro.props;
       class="sr-only focus:not-sr-only absolute top-0 left-0 m-2 rounded bg-primary px-3 py-2 text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring"
       >Przejdź do treści</a
     >
-    <main id="main-content" class="px-4 sm:px-6 lg:px-8">
-      <!-- Global top navigation -->
-      <TopMenu />
+    <main id="main-content" class="pl-0 pr-4 sm:pl-0 sm:pr-6 lg:pl-0 lg:pr-8">
       <slot />
     </main>
   </body>
