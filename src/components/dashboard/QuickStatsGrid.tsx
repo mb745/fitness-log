@@ -1,5 +1,4 @@
 import React from "react";
-import StatTile from "./StatTile";
 import type { QuickStatsVM } from "../../lib/hooks/workout-dashboard";
 import { Skeleton } from "../ui/skeleton";
 
@@ -21,7 +20,17 @@ const QuickStatsGrid: React.FC<QuickStatsGridProps> = ({ stats, isLoading }) => 
         isLoading ? (
           <Skeleton key={t.label} className="h-24 w-full" />
         ) : (
-          <StatTile key={t.label} label={t.label} value={t.value} />
+          <div
+            key={t.label}
+            className="rounded-lg border p-4 flex flex-col items-center justify-center text-center bg-card"
+          >
+            <span className="text-3xl font-bold mb-1" data-testid="stat-value">
+              {t.value}
+            </span>
+            <span className="text-sm text-muted-foreground" data-testid="stat-label">
+              {t.label}
+            </span>
+          </div>
         )
       )}
     </div>

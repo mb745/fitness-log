@@ -10,12 +10,13 @@ import HeroCard from "./HeroCard";
 import ActiveWorkoutBanner from "./ActiveWorkoutBanner";
 import QuickStatsGrid from "./QuickStatsGrid";
 import WorkoutSummaryCard from "./WorkoutSummaryCard";
+import CalendarPage from "../calendar/CalendarPage";
 
 const DashboardPageInner: React.FC = () => {
   const { data: activeSession } = useActiveWorkout();
   const { data: upcomingSession } = useUpcomingWorkout();
   const { data: stats, isLoading: statsLoading } = useQuickStats();
-  const { data: lastCompleted } = useLastCompletedWorkout();
+  // const { data: lastCompleted } = useLastCompletedWorkout();
 
   const handleStart = async () => {
     if (!upcomingSession) return;
@@ -29,7 +30,7 @@ const DashboardPageInner: React.FC = () => {
   };
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className={`container py-8 space-y-6 ${activeSession ? "pb-32" : ""}`}>
       {/* Upcoming workout info - removed duplicate lightweight card (HeroCard covers it) */}
 
       {activeSession && (
@@ -46,7 +47,18 @@ const DashboardPageInner: React.FC = () => {
 
       {stats && <QuickStatsGrid stats={stats} isLoading={statsLoading} />}
 
-      {lastCompleted && <WorkoutSummaryCard session={lastCompleted} />}
+      {/* {lastCompleted && <WorkoutSummaryCard session={lastCompleted} />} */}
+
+      {/* Calendar Section */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Kalendarz treningów</h2>
+          <p className="text-muted-foreground mt-2">
+            Zarządzaj swoimi treningami - przeglądaj zaplanowane, trwające i ukończone sesje.
+          </p>
+        </div>
+        <CalendarPage />
+      </div>
     </div>
   );
 };

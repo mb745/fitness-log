@@ -231,12 +231,40 @@ export class WorkoutPlanService {
   /**
    * Activate a workout plan and deactivate all others for the user.
    * Returns null if plan not found or doesn't belong to user.
+   * Abandons all scheduled and in-progress sessions of the previously active plan.
    */
   async activatePlan(planId: number, userId: UUID): Promise<WorkoutPlanDTO | null> {
     // First, verify plan exists and belongs to user
     const plan = await this.verifyPlanOwnership(planId, userId);
     if (!plan) {
       return null;
+    }
+
+    // Find currently active plan
+    const { data: activePlans } = await this.supabase
+      .from("workout_plans")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("is_active", true);
+
+    // If there's an active plan, abandon all its scheduled and in-progress sessions
+    if (activePlans && activePlans.length > 0) {
+      const activePlanIds = activePlans.map((p) => p.id);
+
+      const { error: abandonError } = await this.supabase
+        .from("workout_sessions")
+        .update({
+          status: "abandoned",
+          completed_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+        .in("workout_plan_id", activePlanIds)
+        .in("status", ["scheduled", "in_progress"]);
+
+      if (abandonError) {
+        console.error("[WorkoutPlanService] Error abandoning previous plan sessions:", abandonError);
+        throw new Error(`Failed to abandon previous plan sessions: ${abandonError.message}`);
+      }
     }
 
     // Deactivate all other plans

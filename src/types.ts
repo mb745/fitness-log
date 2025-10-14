@@ -67,8 +67,13 @@ export type WorkoutPlanDetailDTO = WorkoutPlanDTO & {
   exercises: PlanExerciseWithExerciseDTO[];
 };
 
+export type SessionSetWithExerciseDTO = SessionSetDTO & {
+  exercise_name: string;
+};
+
 export type WorkoutSessionDetailDTO = WorkoutSessionDTO & {
-  sets: SessionSetDTO[];
+  plan_name: string;
+  sets: SessionSetWithExerciseDTO[];
 };
 
 // ===== View DTOs (analytics) =====
@@ -186,3 +191,19 @@ export type ExercisesListResponse = PaginatedResponse<ExerciseDTO>;
 export type WorkoutPlansListResponse = PaginatedResponse<WorkoutPlanDTO>;
 export type WorkoutSessionsListResponse = PaginatedResponse<WorkoutSessionDTO>;
 export type WorkoutHistoryListResponse = PaginatedResponse<WorkoutHistoryDTO>;
+
+// ===== Calendar View Types =====
+
+export interface CalendarEventVM {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  status: WorkoutSessionStatus;
+}
+
+export interface CalendarEventsListResponse extends Omit<PaginatedResponse<CalendarEventVM>, "data"> {
+  data: CalendarEventVM[];
+}
+
+export type CalendarView = "month";

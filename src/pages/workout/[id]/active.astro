@@ -1,0 +1,17 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { ActiveWorkoutPage } from "../../../components/workout/ActiveWorkoutPage";
+
+// Get session ID from URL params
+const { id } = Astro.params;
+const sessionId = parseInt(id || "0", 10);
+
+// Validate session ID
+if (!id || isNaN(sessionId) || sessionId <= 0) {
+  return Astro.redirect("/dashboard");
+}
+---
+
+<Layout title="Aktywny Trening" noindex>
+  <ActiveWorkoutPage client:load sessionId={sessionId} />
+</Layout>

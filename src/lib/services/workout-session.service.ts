@@ -120,20 +120,21 @@ export class WorkoutSessionService {
 
   /**
    * Get a single workout session by ID with all its sets.
-   * Returns session details including all session_sets.
+   * Returns session details including all session_sets with exercise names.
    *
    * @param sessionId - Session ID to retrieve
    * @param userId - User ID for ownership validation
-   * @returns Session with embedded sets
+   * @returns Session with embedded sets and workout plan name
    * @throws NotFoundError if session not found or doesn't belong to user
    */
   async getSessionById(sessionId: number, userId: UUID): Promise<WorkoutSessionDetailDTO> {
-    // Query session with embedded sets using Supabase's nested select
+    // Query session with embedded sets and related data using Supabase's nested select
     const { data, error } = await this.supabase
       .from("workout_sessions")
       .select(
         `
         *,
+        workout_plan:workout_plans(name),
         sets:session_sets(
           id,
           workout_session_id,
@@ -146,7 +147,10 @@ export class WorkoutSessionService {
           completed_at,
           notes,
           created_at,
-          updated_at
+          updated_at,
+          plan_exercise:plan_exercises(
+            exercise:exercises(name)
+          )
         )
       `
       )
@@ -162,8 +166,25 @@ export class WorkoutSessionService {
       throw new Error(`Failed to fetch workout session: ${error.message}`);
     }
 
+    // Transform sets to include exercise name
+    const setsWithExercises = ((data.sets as any[]) || []).map((set) => ({
+      id: set.id,
+      workout_session_id: set.workout_session_id,
+      plan_exercise_id: set.plan_exercise_id,
+      set_number: set.set_number,
+      target_reps: set.target_reps,
+      actual_reps: set.actual_reps,
+      weight_kg: set.weight_kg,
+      status: set.status,
+      completed_at: set.completed_at,
+      notes: set.notes,
+      created_at: set.created_at,
+      updated_at: set.updated_at,
+      exercise_name: set.plan_exercise?.exercise?.name || "Nieznane ćwiczenie",
+    }));
+
     // Sort sets by plan_exercise_id and set_number
-    const sortedSets = ((data.sets as SessionSetDTO[]) || []).sort((a, b) => {
+    const sortedSets = setsWithExercises.sort((a, b) => {
       if (a.plan_exercise_id !== b.plan_exercise_id) {
         return a.plan_exercise_id - b.plan_exercise_id;
       }
@@ -172,6 +193,7 @@ export class WorkoutSessionService {
 
     return {
       ...(data as WorkoutSessionDTO),
+      plan_name: (data.workout_plan as any)?.name || "Nieznany plan",
       sets: sortedSets,
     };
   }

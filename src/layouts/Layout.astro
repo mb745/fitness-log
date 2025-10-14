@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import TopMenu from "../components/TopMenu.astro";
+import { Toaster } from "../components/ui/toaster";
 
 interface Props {
   title?: string;
@@ -31,6 +32,8 @@ const { title = "10x Astro Starter", noindex = false } = Astro.props;
       <TopMenu />
       <slot />
     </main>
+    <!-- Toast notifications -->
+    <Toaster client:load />
   </body>
 </html>
 

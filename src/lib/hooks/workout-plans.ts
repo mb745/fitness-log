@@ -15,6 +15,10 @@ export function buildWorkoutPlansKey(showInactive: boolean) {
   return ["workoutPlans", { showInactive }];
 }
 
+export function buildActiveWorkoutPlanKey() {
+  return ["activeWorkoutPlan"];
+}
+
 export function useWorkoutPlans(showInactive: boolean) {
   return useQuery({
     queryKey: buildWorkoutPlansKey(showInactive),
@@ -81,5 +85,18 @@ export function useDeletePlanMutation() {
     onSuccess() {
       qc.invalidateQueries({ queryKey: ["workoutPlans"] });
     },
+  });
+}
+
+export function useActiveWorkoutPlan() {
+  return useQuery({
+    queryKey: buildActiveWorkoutPlanKey(),
+    queryFn: async () => {
+      const qs = new URLSearchParams({ is_active: "true", page_size: "1" });
+      const response = await fetchJson<WorkoutPlansListResponse>(`/api/v1/workout-plans?${qs.toString()}`);
+      // Return the first active plan or null if none
+      return response.data.length > 0 ? response.data[0] : null;
+    },
+    staleTime: 60_000,
   });
 }
