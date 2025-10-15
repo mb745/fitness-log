@@ -34,22 +34,24 @@ export interface PaginationMeta {
 /**
  * Checks if the user is authenticated and returns their user ID.
  *
- * For development purposes, this uses a default user ID.
- * In production, this should be integrated with Supabase Auth middleware
- * to extract the user from context.locals.
+ * This function verifies the user's session via Supabase Auth and returns
+ * the authenticated user's ID. It's used in API endpoints to protect resources.
  *
- * @param _context - Partial Astro API context with request and locals
+ * @param context - Partial Astro API context with request and locals
  * @returns User ID if authenticated, null otherwise
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function checkAuth(_context: Pick<APIContext, "request" | "locals">): Promise<string | null> {
-  // TODO: Implement proper Supabase Auth check
-  // const { data: { user } } = await context.locals.supabase.auth.getUser();
-  // return user?.id || null;
+export async function checkAuth(context: Pick<APIContext, "request" | "locals">): Promise<string | null> {
+  // Check if user is set in context.locals (set by middleware)
+  if (context.locals.user) {
+    return context.locals.user.id;
+  }
 
-  // For now, use default user ID for development
-  const { DEFAULT_USER_ID } = await import("../db/supabase.client");
-  return DEFAULT_USER_ID;
+  // Fallback: verify session directly with Supabase
+  const {
+    data: { user },
+  } = await context.locals.supabase.auth.getUser();
+
+  return user?.id || null;
 }
 
 /**

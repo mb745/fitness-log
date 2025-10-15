@@ -25,25 +25,25 @@ Diagram przedstawia kompletną architekturę modułu autentykacji aplikacji Fitn
 flowchart TD
     subgraph "Warstwa Klienta"
         User["Użytkownik"]podziel
-        
+
         subgraph "Strony Publiczne"
             IndexPage["index.astro<br/>Landing Page"]
             LoginPage["login.astro<br/>Strona Logowania"]
             RegisterPage["register.astro<br/>Strona Rejestracji"]
         end
-        
+
         subgraph "Strony Chronione"
             DashboardPage["dashboard.astro<br/>Pulpit"]
             ProfilePage["profile.astro<br/>Profil"]
             PlansPage["plans.astro<br/>Plany"]
             WorkoutPage["workout/[id]/active.astro<br/>Aktywny Trening"]
         end
-        
+
         subgraph "Komponenty React Formularzy"
             LoginForm["LoginForm.tsx<br/>Formularz logowania<br/>react-hook-form + zod"]
             RegisterForm["RegisterForm.tsx<br/>Formularz rejestracji<br/>walidacja + wskaźnik siły hasła"]
         end
-        
+
         subgraph "Komponenty Prezentacyjne"
             AuthCard["AuthCard.astro<br/>Kontener formularzy auth<br/>logo + tytuł + slot"]
             TopMenu["TopMenu.astro<br/>Menu nawigacyjne<br/>+ przycisk wyloguj"]
@@ -51,49 +51,49 @@ flowchart TD
             ProtectedLayout["Layout.astro<br/>Layout chroniony<br/>weryfikacja sesji + TopMenu"]
         end
     end
-    
+
     subgraph "Warstwa Middleware"
         Middleware["middleware/index.ts<br/>Weryfikacja sesji<br/>Przekierowania<br/>Kontrola bezczynności<br/>Udostępnia supabaseClient"]
     end
-    
+
     subgraph "Warstwa API"
         subgraph "Endpointy Autentykacji"
             LogoutEndpoint["POST /api/v1/auth/logout<br/>Wylogowanie użytkownika"]
         end
-        
+
         subgraph "Endpointy Profilu"
             GetProfile["GET /api/v1/profile<br/>Pobranie profilu"]
             CreateProfile["POST /api/v1/profile<br/>Utworzenie profilu"]
             UpdateProfile["PATCH /api/v1/profile<br/>Aktualizacja profilu"]
         end
-        
+
         subgraph "Helpery API"
             CheckAuth["checkAuth()<br/>Weryfikacja sesji w endpointach"]
             ApiHelpers["api-helpers.ts<br/>errorResponse, jsonResponse<br/>handleZodError, logApiError"]
         end
     end
-    
+
     subgraph "Warstwa Serwisów"
         ProfileService["ProfileService<br/>CRUD na public.users<br/>Sprawdzanie własności"]
-        
+
         subgraph "Walidacja"
             ProfileValidation["profile.validation.ts<br/>Schematy Zod<br/>profileCreateSchema<br/>profileUpdateSchema"]
         end
     end
-    
+
     subgraph "Warstwa Bazy Danych"
         SupabaseClient["supabase.client.ts<br/>Klient Supabase<br/>Zarządzanie sesją"]
-        
+
         subgraph "Supabase Auth"
             AuthUsers["auth.users<br/>Użytkownicy Auth<br/>email, hashed password"]
             AuthMethods["Metody Auth:<br/>signUp()<br/>signInWithPassword()<br/>signOut()<br/>getSession()"]
         end
-        
+
         subgraph "Baza Aplikacji"
             PublicUsers["public.users<br/>Profile użytkowników<br/>weight, height, gender, injuries"]
         end
     end
-    
+
     %% Przepływ rejestracji
     User -->|"wypełnia formularz"| RegisterPage
     RegisterPage --> PublicLayout
@@ -110,7 +110,7 @@ flowchart TD
     ProfileService -->|"INSERT"| PublicUsers
     PublicUsers -->|"ProfileDTO"| RegisterForm
     RegisterForm -->|"redirect"| DashboardPage
-    
+
     %% Przepływ logowania
     User -->|"wypełnia formularz"| LoginPage
     LoginPage --> PublicLayout
@@ -121,14 +121,14 @@ flowchart TD
     SupabaseClient -->|"weryfikacja"| AuthUsers
     AuthUsers -->|"sesja + JWT"| LoginForm
     LoginForm -->|"redirect"| DashboardPage
-    
+
     %% Przepływ wylogowania
     User -->|"klik wyloguj"| TopMenu
     TopMenu -->|"POST"| LogoutEndpoint
     LogoutEndpoint -->|"signOut()"| SupabaseClient
     SupabaseClient -->|"usuwa sesję"| AuthUsers
     LogoutEndpoint -->|"redirect"| LoginPage
-    
+
     %% Przepływ ochrony stron
     User -->|"żądanie strony"| Middleware
     Middleware -->|"getSession()"| SupabaseClient
@@ -136,7 +136,7 @@ flowchart TD
     Middleware -->|"zalogowani na /login,/register"| DashboardPage
     Middleware -->|"niezalogowani na chronione"| LoginPage
     Middleware -->|"limit bezczynności"| LoginPage
-    
+
     %% Strony chronione przez Layout
     DashboardPage --> ProtectedLayout
     ProfilePage --> ProtectedLayout
@@ -145,29 +145,29 @@ flowchart TD
     ProtectedLayout -->|"zawiera"| TopMenu
     ProtectedLayout -->|"getSession()"| SupabaseClient
     ProtectedLayout -->|"brak sesji → redirect"| LoginPage
-    
+
     %% Operacje na profilu
     ProfilePage -->|"GET"| GetProfile
     GetProfile --> CheckAuth
     CheckAuth --> ProfileService
     ProfileService -->|"SELECT WHERE user_id"| PublicUsers
-    
+
     ProfilePage -->|"PATCH dane"| UpdateProfile
     UpdateProfile --> CheckAuth
     UpdateProfile --> ProfileValidation
     CheckAuth --> ProfileService
     ProfileService -->|"UPDATE WHERE user_id"| PublicUsers
-    
+
     %% Wspólne zależności
     AuthMethods -.->|"używane przez"| SupabaseClient
     ApiHelpers -.->|"używane przez"| LogoutEndpoint
     ApiHelpers -.->|"używane przez"| CreateProfile
     ApiHelpers -.->|"używane przez"| GetProfile
     ApiHelpers -.->|"używane przez"| UpdateProfile
-    
+
     %% Relacja między tabelami
     AuthUsers -.->|"1:1 relacja<br/>id references"| PublicUsers
-    
+
     %% Style dla różnych typów węzłów
     classDef publicPages fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     classDef protectedPages fill:#fff3e0,stroke:#f57c00,stroke-width:2px
@@ -177,7 +177,7 @@ flowchart TD
     classDef api fill:#ffe0b2,stroke:#e64a19,stroke-width:2px
     classDef services fill:#e0f2f1,stroke:#00796b,stroke-width:2px
     classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    
+
     class IndexPage,LoginPage,RegisterPage publicPages
     class DashboardPage,ProfilePage,PlansPage,WorkoutPage protectedPages
     class LoginForm,RegisterForm reactComponents
@@ -202,6 +202,7 @@ flowchart TD
 ## Kluczowe przepływy
 
 ### 1. Rejestracja użytkownika (US-001)
+
 1. Użytkownik wypełnia formularz rejestracji
 2. Walidacja client-side (zod)
 3. Wywołanie `signUp()` → utworzenie w `auth.users`
@@ -209,18 +210,21 @@ flowchart TD
 5. Przekierowanie na `/dashboard`
 
 ### 2. Logowanie użytkownika (US-002)
+
 1. Użytkownik wypełnia formularz logowania
 2. Walidacja client-side (zod)
 3. Wywołanie `signInWithPassword()` → weryfikacja i sesja
 4. Przekierowanie na `/dashboard`
 
 ### 3. Wylogowanie użytkownika (US-003)
+
 1. Kliknięcie przycisku "Wyloguj" w TopMenu
 2. Wywołanie `POST /api/v1/auth/logout`
 3. Usunięcie sesji przez `signOut()`
 4. Przekierowanie na `/login`
 
 ### 4. Ochrona zasobów (US-019)
+
 1. Middleware sprawdza sesję dla każdego żądania
 2. Layout.astro dodatkowo weryfikuje server-side
 3. Niezalogowani → redirect na `/login`
@@ -232,12 +236,14 @@ flowchart TD
 Zgodnie z [auth-spec.md](./auth-spec.md):
 
 ### Frontend
+
 - [ ] LoginForm/RegisterForm – usunąć dyrektywę `"use client"`
 - [ ] TopMenu – dodać przycisk wylogowania
 - [ ] Layout.astro – dodać sprawdzenie sesji i redirect
 - [ ] Obsługa 401 i redirect na `/login?reason=idle`
 
 ### Backend
+
 - [ ] Utworzyć endpoint `POST /api/v1/auth/logout`
 - [ ] Zaktualizować `checkAuth` w `api-helpers.ts`
 - [ ] Dodać `checkAuthAndActivity` (idle timeout + session check)
@@ -245,6 +251,7 @@ Zgodnie z [auth-spec.md](./auth-spec.md):
 - [ ] CSRF: weryfikacja Origin/double submit cookie
 
 ### Middleware
+
 - [ ] Ochrona chronionych stron
 - [ ] Utrzymywanie cookie `lastActivityAt`
 - [ ] Wymuszanie wylogowania po bezczynności
@@ -253,4 +260,3 @@ Zgodnie z [auth-spec.md](./auth-spec.md):
 
 - [PRD - Dokument wymagań produktu](./prd.md)
 - [Specyfikacja techniczna modułu autentykacji](./auth-spec.md)
-

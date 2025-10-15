@@ -4,8 +4,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./db/database.types.ts";
 
 interface ImportMetaEnv {
-  readonly SUPABASE_URL: string;
-  readonly SUPABASE_KEY: string;
+  readonly PUBLIC_SUPABASE_URL: string;
+  readonly PUBLIC_SUPABASE_KEY: string;
   readonly OPENROUTER_API_KEY: string;
   // more env variables...
 }
@@ -19,6 +19,10 @@ declare global {
     // Augment Astro Locals with Supabase client for typed access in routes and components
     interface Locals {
       supabase: SupabaseClient<Database>;
+      user: {
+        id: string;
+        email: string | undefined;
+      } | null;
     }
   }
 }

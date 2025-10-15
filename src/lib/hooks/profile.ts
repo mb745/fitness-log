@@ -40,5 +40,5 @@ export function useProfile() {
     },
   });
 
-  return { ...query, updateProfile: updateMutation.mutateAsync, updating: updateMutation.isLoading };
+  return { ...query, updateProfile: updateMutation.mutateAsync, updating: updateMutation.isPending };
 }

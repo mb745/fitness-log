@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { PlansGrid } from "./PlansGrid.tsx";
 
 const HeaderBar: React.FC = () => (
-  <div className="flex items-center justify-between mb-4">
+  <div className="space-y-4 mb-8">
     <h1 className="text-2xl font-semibold">Plany Treningowe</h1>
     <Button
       onClick={() => {

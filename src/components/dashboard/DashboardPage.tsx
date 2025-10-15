@@ -26,7 +26,7 @@ const DashboardPageInner: React.FC = () => {
   };
 
   return (
-    <div className={`container py-8 space-y-6 ${activeSession ? "pb-32" : ""}`}>
+    <div className={`container mx-auto py-8 space-y-6 ${activeSession ? "pb-32" : ""}`}>
       {/* Upcoming workout info - removed duplicate lightweight card (HeroCard covers it) */}
 
       {activeSession && (

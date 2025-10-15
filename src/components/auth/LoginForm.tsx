@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -38,7 +36,7 @@ export function LoginForm({ className }: { className?: string }) {
         setErrorMessage("Nieprawidłowe dane logowania");
       }
     } else {
-      window.location.href = "/dashboard";
+      window.location.replace("/dashboard");
     }
   };
 

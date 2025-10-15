@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -55,6 +53,15 @@ export function RegisterForm({ className }: { className?: string }) {
       return;
     }
 
+    // Check if session was created (email confirmation might be required)
+    if (!signUpData.session) {
+      setErrorMessage("Potwierdź swój adres e-mail przed zalogowaniem");
+      return;
+    }
+
+    // Small delay to ensure cookies are synchronized
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // Create profile via API
     const response = await fetch("/api/v1/profile", {
       method: "POST",
@@ -62,12 +69,13 @@ export function RegisterForm({ className }: { className?: string }) {
       body: JSON.stringify({}),
     });
     if (!response.ok) {
-      setErrorMessage("Nie udało się utworzyć profilu");
+      const errorData = await response.json().catch(() => ({}));
+      setErrorMessage(errorData.message || "Nie udało się utworzyć profilu");
       return;
     }
 
     // Redirect on success
-    window.location.href = "/dashboard";
+    window.location.replace("/dashboard");
   };
 
   return (
@@ -126,10 +134,7 @@ export function RegisterForm({ className }: { className?: string }) {
           {...register("termsAccepted")}
         />
         <label htmlFor="terms" className="text-sm">
-          Akceptuję{" "}
-          <a href="/terms" className="text-primary underline">
-            regulamin
-          </a>
+          Akceptuję regulamin
         </label>
       </div>
       {errors.termsAccepted && <p className="-mt-2 text-xs text-destructive">{errors.termsAccepted.message}</p>}

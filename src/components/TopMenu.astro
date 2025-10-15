@@ -1,21 +1,70 @@
 ---
-
+const userEmail = Astro.locals.user?.email || "";
 ---
 
-<nav class="flex items-center justify-center gap-4 py-4">
-  <a
-    href="/dashboard"
-    class="text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-    >Dashboard</a
-  >
-  <a
-    href="/plans"
-    class="text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-    >Plany treningowe</a
-  >
-  <a
-    href="/profile"
-    class="text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-    >Mój profil</a
-  >
+<nav class="grid grid-cols-3 items-center gap-4 py-4">
+  <div></div>
+  <div class="flex items-center justify-center gap-6">
+    <a
+      href="/dashboard"
+      class="text-lg font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+      >Dashboard</a
+    >
+    <a
+      href="/plans"
+      class="text-lg font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+      >Plany treningowe</a
+    >
+    <a
+      href="/profile"
+      class="text-lg font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+      >Mój profil</a
+    >
+  </div>
+  <div class="flex items-center justify-end gap-3">
+    {userEmail && <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Witaj {userEmail}</span>}
+    <button
+      id="logout-button"
+      type="button"
+      class="rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600"
+      aria-label="Wyloguj się"
+    >
+      Wyloguj się
+    </button>
+  </div>
 </nav>
+
+<script>
+  const logoutButton = document.getElementById("logout-button");
+
+  if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+      try {
+        logoutButton.textContent = "Wylogowywanie...";
+        logoutButton.setAttribute("disabled", "true");
+
+        const response = await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          // Redirect to login page after successful logout
+          window.location.href = "/login";
+        } else {
+          const errorData = await response.json();
+          alert(errorData.message || "Nie udało się wylogować");
+          logoutButton.textContent = "Wyloguj się";
+          logoutButton.removeAttribute("disabled");
+        }
+      } catch (error) {
+        console.error("Logout error:", error);
+        alert("Wystąpił błąd podczas wylogowania");
+        logoutButton.textContent = "Wyloguj się";
+        logoutButton.removeAttribute("disabled");
+      }
+    });
+  }
+</script>
