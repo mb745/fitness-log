@@ -1,0 +1,13 @@
+id,muscle_group_id,name,created_at
+1,1,dolne plecy,2025-10-15 12:00:00+00
+2,1,górne plecy,2025-10-15 12:00:00+00
+3,2,uda,2025-10-15 12:00:00+00
+4,2,pośladki,2025-10-15 12:00:00+00
+5,3,górna klatka piersiowa,2025-10-15 12:00:00+00
+6,3,dolna klatka piersiowa,2025-10-15 12:00:00+00
+7,4,biceps,2025-10-15 12:00:00+00
+8,4,triceps,2025-10-15 12:00:00+00
+9,5,przednie barki,2025-10-15 12:00:00+00
+10,5,tylne barki,2025-10-15 12:00:00+00
+11,6,górny brzuch,2025-10-15 12:00:00+00
+12,6,dolny brzuch,2025-10-15 12:00:00+00

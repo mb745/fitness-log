@@ -123,6 +123,7 @@ Kryteria akceptacji:
 1. Użytkownik może modyfikować parametry ćwiczeń i kolejność.
 2. Zmiany zapisują się w planie i aktualizują widoki kalendarza.
 3. Użytkownik może usunąć ćwiczenie z planu.
+4. Użytkownik może edytować tylko swoje plany treningowe
 
 US-007 Przegląd kalendarza treningów  
 Opis: Jako użytkownik chcę widzieć swoje zaplanowane treningi na kalendarzu, aby planować czas.  
@@ -132,6 +133,7 @@ Kryteria akceptacji:
 2. Kliknięcie w trening otwiera szczegóły z listą ćwiczeń.
 3. Kalendarz aktualizuje status treningu (Zaplanowany, W trakcie, Wykonany, Porzucony).
 4. Kalendarz pokazuje informacje o anulowanych sesjach dla przejrzystości historii.
+5. Użytkownik widzi tylko swoje treningi
 
 US-008 Pulpit z najbliższym treningiem  
 Opis: Jako zalogowany użytkownik chcę na pulpicie widzieć najbliższy trening, aby szybko rozpocząć.  
@@ -140,6 +142,7 @@ Kryteria akceptacji:
 1. Pulpit pokazuje datę, godzinę i skrócone informacje o planie.
 2. Dostępne są akcje Rozpocznij trening oraz Otwórz plan.
 3. Po ukończeniu lub anulowaniu treningu pulpit aktualizuje się automatycznie.
+4. Użytkownik widzi tylko swoje treningi
 
 US-009 Rozpoczęcie treningu  
 Opis: Jako użytkownik chcę rozpocząć zaplanowany trening z kalendarza lub pulpitu, aby przejść do widoku aktywnego treningu.  

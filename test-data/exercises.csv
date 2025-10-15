@@ -1,0 +1,31 @@
+id,name,slug,muscle_group_id,muscle_subgroup_id,exercise_type,recommended_rep_range_min,recommended_rep_range_max,instructions,is_active,created_at,updated_at
+1,Podciaganie,podciaganie,1,2,compound,6,12,Podciaganie na drazku,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+2,Wioslowanie sztanga,wioslowanie-sztanga,1,1,compound,6,12,Wioslowanie sztanga w opadzie,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+3,Przyciaganie linki wyciagu dolnego,przyciaganie-linki-wyciagu,1,2,isolation,10,15,Przyciaganie linki wyciagu do brzucha,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+4,Prostowanie grzbietu na lawce,prostowanie-grzbietu-lawka,1,1,isolation,12,15,Prostowanie grzbietu na lawce rzymskiej,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+5,Martwy ciag klasyczny,martwy-ciag,1,1,compound,5,8,Martwy ciag klasyczny,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+6,Przysiad ze sztanga,przysiad,2,3,compound,6,12,Przysiad ze sztanga na barkach,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+7,Wykroki z hantlami,wykroki-hantle,2,3,compound,8,12,Wykroki z hantlami naprzod,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+8,Uginanie nog na maszynie,uginanie-nog,2,3,isolation,10,15,Uginanie nog lezac na maszynie,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+9,Prostowanie nog na maszynie,prostowanie-nog,2,3,isolation,10,15,Prostowanie nog siedzac na maszynie,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+10,Hip thrust,hip-thrust,2,4,compound,6,12,Hip thrust ze sztanga,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+11,Wyciskanie lezaco,wyciskanie-lezaco,3,6,compound,6,10,Wyciskanie sztangi na lawce plaskiej,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+12,Wyciskanie skos dodatni,wyciskanie-skos-dodatni,3,5,compound,6,10,Wyciskanie sztangi na lawce skos dodatni,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+13,Rozpietki lawka plaska,rozpietki-plaska,3,6,isolation,10,15,Rozpietki z hantlami na lawce plaskiej,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+14,Rozpietki skos ujemny,rozpietki-skos-ujemny,3,6,isolation,10,15,Rozpietki z hantlami na lawce skos ujemny,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+15,Pompki klasyczne,pompki,3,6,compound,8,15,Pompki klasyczne na podlodze,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+16,Uginanie ramion sztanga,uginanie-ramion-sztanga,4,7,isolation,8,12,Uginanie ramion stojac ze sztanga,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+17,Uginanie ramion hantle supinacja,uginanie-ramion-hantle,4,7,isolation,10,15,Uginanie ramion z hantlami z supinacja,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+18,Prostowanie ramion wyciag,prostowanie-ramion-wyciag,4,8,isolation,10,15,Prostowanie ramion na wyciagu,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+19,Wyciskanie waskie lezaco,wyciskanie-waskie,4,8,compound,6,10,Wyciskanie sztangi waskim chwytem,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+20,Dipy na poreczach,dipy,4,8,compound,6,12,Pompki na poreczach,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+21,Wyciskanie zolnierskie,wyciskanie-zolnierskie,5,9,compound,6,10,Wyciskanie sztangi nad glowe,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+22,Unoszenie bokiem,unoszenie-bokiem,5,9,isolation,10,15,Unoszenie ramion bokiem z hantlami,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+23,Odwrotne rozpietki,odwrotne-rozpietki,5,10,isolation,10,15,Odwrotne rozpietki na maszynie,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+24,Face pull,face-pull,5,10,isolation,12,15,Face pull z linkami wyciagu,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+25,Arnold press,arnold-press,5,9,compound,6,12,Arnold press z hantlami,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+26,Plank,plank,6,11,compound,30,60,Plank izometryczny,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+27,Brzuszki,brzuszki,6,11,isolation,15,20,Brzuszki klasyczne,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+28,Unoszenie nog w zwisie,unoszenie-nog,6,12,isolation,10,15,Unoszenie nog w zwisie na drazku,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+29,Russian twist,russian-twist,6,11,compound,12,20,Russian twist z obciazeniem,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00
+30,Ab wheel rollout,ab-wheel-rollout,6,11,compound,6,12,Ab wheel rollout,true,2025-10-15 12:00:00+00,2025-10-15 12:00:00+00

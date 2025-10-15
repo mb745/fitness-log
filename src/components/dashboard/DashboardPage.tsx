@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  useActiveWorkout,
-  useUpcomingWorkout,
-  useQuickStats,
-  useLastCompletedWorkout,
-} from "../../lib/hooks/workout-dashboard";
+import { useActiveWorkout, useUpcomingWorkout, useQuickStats } from "../../lib/hooks/workout-dashboard";
+import { useActiveWorkoutPlan } from "../../lib/hooks/workout-plans";
 import HeroCard from "./HeroCard";
 import ActiveWorkoutBanner from "./ActiveWorkoutBanner";
 import QuickStatsGrid from "./QuickStatsGrid";
-import WorkoutSummaryCard from "./WorkoutSummaryCard";
 import CalendarPage from "../calendar/CalendarPage";
 
 const DashboardPageInner: React.FC = () => {
   const { data: activeSession } = useActiveWorkout();
   const { data: upcomingSession } = useUpcomingWorkout();
   const { data: stats, isLoading: statsLoading } = useQuickStats();
+  const { data: activePlan } = useActiveWorkoutPlan();
   // const { data: lastCompleted } = useLastCompletedWorkout();
 
   const handleStart = async () => {
@@ -47,7 +43,18 @@ const DashboardPageInner: React.FC = () => {
 
       {stats && <QuickStatsGrid stats={stats} isLoading={statsLoading} />}
 
-      {/* {lastCompleted && <WorkoutSummaryCard session={lastCompleted} />} */}
+      {/* Info when no active plan */}
+      {!activePlan && (
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-2">
+          <h3 className="text-xl font-semibold">Brak zaplanowanych treningów</h3>
+          <p className="text-muted-foreground">
+            Dodaj nowy plan treningowy w {""}
+            <a href="/plans/new" className="text-primary hover:underline">
+              kreatorze planów treningowych
+            </a>
+          </p>
+        </div>
+      )}
 
       {/* Calendar Section */}
       <div className="space-y-4">

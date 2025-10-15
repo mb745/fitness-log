@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 import { useExercisesInfinite } from "../../lib/hooks/exercises";
-import type { ExerciseDTO, ExerciseType } from "../../types";
+import { useQuery } from "@tanstack/react-query";
+import type { ExerciseDTO, MuscleGroupDTO, ExercisesListResponse } from "../../types";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Select } from "../ui/select";
@@ -25,15 +26,30 @@ interface ExerciseLibraryModalProps {
 export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open, onClose, onAdd }) => {
   const [rawQuery, setRawQuery] = React.useState<string>("");
   const query = useDebounce(rawQuery, 300);
-  const [type, setType] = React.useState<ExerciseType | undefined>(undefined);
+  const [muscleGroupId, setMuscleGroupId] = React.useState<number | undefined>(undefined);
+
+  // Fetch muscle groups for dropdown
+  const { data: muscleGroups } = useQuery({
+    queryKey: ["muscle-groups"],
+    queryFn: async () => {
+      const res = await fetch("/api/v1/muscle-groups", { credentials: "include" });
+      if (!res.ok) throw new Error(String(res.status));
+      return (await res.json()) as MuscleGroupDTO[];
+    },
+    staleTime: 60_000,
+  });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useExercisesInfinite({
     q: query.length >= 2 ? query : undefined,
-    type,
+    muscle_group_id: muscleGroupId,
+    page_size: 40,
   });
 
   // Flattened items array
-  const items = useMemo(() => (data ? data.pages.flatMap((p) => p.data) : []), [data]);
+  const items = useMemo(() => {
+    if (!data) return [] as ExerciseDTO[];
+    return (data.pages as ExercisesListResponse[]).flatMap((p) => p.data);
+  }, [data]);
 
   // Virtualizer setup
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -44,15 +60,23 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
     overscan: 8,
   });
 
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  // Infinite scroll: fetch next page when near bottom
+  const handleScroll = useCallback(() => {
+    const el = listRef.current;
+    if (!el || isFetchingNextPage || !hasNextPage) return;
+
+    const { scrollTop, clientHeight, scrollHeight } = el;
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
   useEffect(() => {
-    if (!sentinelRef.current || !hasNextPage) return;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) fetchNextPage();
-    });
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage]);
+    const el = listRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   if (!open) return null;
 
@@ -60,21 +84,35 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white dark:bg-slate-900 w-full max-w-3xl h-[80vh] rounded-lg shadow-lg flex flex-col">
         {/* ModalHeader */}
-        <div className="flex items-center gap-2 p-4 border-b">
+        <div className="p-4 border-b space-y-2">
+          {/* Row 1: muscle group filter + close */}
+          <div className="flex items-center gap-2">
+            <Select
+              className="flex-1"
+              value={muscleGroupId?.toString() ?? ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setMuscleGroupId(val ? Number(val) : undefined);
+              }}
+            >
+              <option value="">Wszystkie grupy</option>
+              {muscleGroups?.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
+            </Select>
+            <Button variant="ghost" onClick={onClose}>
+              Zamknij
+            </Button>
+          </div>
+          {/* Row 2: search input full width */}
           <Input
-            className="flex-1"
+            className="w-full"
             placeholder="Wyszukaj ćwiczenie..."
             value={rawQuery}
             onChange={(e) => setRawQuery(e.target.value)}
           />
-          <Select value={type ?? ""} onValueChange={(v) => setType(v as ExerciseType)}>
-            <option value="">Wszystkie</option>
-            <option value="compound">Compound</option>
-            <option value="isolation">Isolation</option>
-          </Select>
-          <Button variant="ghost" onClick={onClose}>
-            Zamknij
-          </Button>
         </div>
 
         {/* VirtualizedExerciseList */}
@@ -91,11 +129,21 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
               return (
                 <div
                   key={virtualRow.key}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      if (exercise) onAdd(exercise);
+                    }
+                  }}
                   className="absolute left-0 right-0 py-2 border-b cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800"
                   style={{
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
-                  onClick={() => exercise && onAdd(exercise)}
+                  onClick={() => {
+                    if (exercise) onAdd(exercise);
+                  }}
+                  // no sentinel ref here
                 >
                   {exercise ? (
                     <>
@@ -109,8 +157,8 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
               );
             })}
           </div>
-          {/* sentinel */}
-          <div ref={sentinelRef} />
+          {/* spacer to allow scroll near-end detection */}
+          <div className="h-4" />
           {isFetchingNextPage && <p className="text-center py-2 text-sm">Ładowanie...</p>}
           {!isFetchingNextPage && items.length === 0 && <p className="text-center py-8">Brak wyników</p>}
         </div>
