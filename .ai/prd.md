@@ -107,7 +107,7 @@ Kryteria akceptacji:
 4. Wyniki aktualizują się bez przeładowania strony.
 
 US-005 Tworzenie planu treningowego  
-Opis: Jako użytkownik chcę stworzyć plan treningowy wybierając ćwiczenia i parametry, aby przygotować trening.  
+Opis: Jako zalogowany użytkownik chcę stworzyć plan treningowy wybierając ćwiczenia i parametry, aby przygotować trening.  
 Kryteria akceptacji:
 
 1. Użytkownik może dodać wiele ćwiczeń z biblioteki do planu.
@@ -126,7 +126,7 @@ Kryteria akceptacji:
 4. Użytkownik może edytować tylko swoje plany treningowe
 
 US-007 Przegląd kalendarza treningów  
-Opis: Jako użytkownik chcę widzieć swoje zaplanowane treningi na kalendarzu, aby planować czas.  
+Opis: Jako zalogowany użytkownik chcę widzieć swoje zaplanowane treningi na kalendarzu, aby planować czas.  
 Kryteria akceptacji:
 
 1. Widok kalendarza pokazuje treningi w układzie tygodniowym lub miesięcznym.
