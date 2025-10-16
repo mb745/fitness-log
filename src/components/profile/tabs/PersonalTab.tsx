@@ -52,29 +52,40 @@ const PersonalTab: React.FC = () => {
         <label htmlFor="weight_kg" className="block text-sm font-medium mb-1">
           Waga (kg)
         </label>
-        <Input id="weight_kg" type="number" step="0.1" {...register("weight_kg", { valueAsNumber: true })} />
+        <Input
+          id="weight_kg"
+          type="number"
+          step="0.1"
+          data-testid="weight-input"
+          {...register("weight_kg", { valueAsNumber: true })}
+        />
       </div>
       <div>
         <label htmlFor="height_cm" className="block text-sm font-medium mb-1">
           Wzrost (cm)
         </label>
-        <Input id="height_cm" type="number" {...register("height_cm", { valueAsNumber: true })} />
+        <Input
+          id="height_cm"
+          type="number"
+          data-testid="height-input"
+          {...register("height_cm", { valueAsNumber: true })}
+        />
       </div>
       <div>
         <label htmlFor="gender" className="block text-sm font-medium mb-1">
           Płeć
         </label>
-        <Select id="gender" {...register("gender")}>
+        <Select id="gender" data-testid="gender-select" {...register("gender")}>
           <option value="">-- wybierz --</option>
           <option value="male">Mężczyzna</option>
           <option value="female">Kobieta</option>
           <option value="na">Nie chcę podawać</option>
         </Select>
       </div>
-      <Button type="submit" disabled={updating}>
+      <Button type="submit" disabled={updating} data-testid="submit-button">
         {updating ? "Zapisywanie…" : "Zapisz"}
       </Button>
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} data-testid="toast" />}
     </form>
   );
 };
