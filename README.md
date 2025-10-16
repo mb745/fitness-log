@@ -23,6 +23,9 @@
   - [6. Project scope](#6-project-scope)
   - [7. Project status](#7-project-status)
   - [8. License](#8-license)
+  - [9. Testing](#9-testing)
+    - [Unit tests](#unit-tests)
+    - [End-to-end (E2E) tests](#end-to-end-e2e-tests)
 
 ## 1. Project name
 
@@ -136,3 +139,21 @@ Out-of-scope items for the MVP include automated plan generation, visual progres
 ## 8. License
 
 License information has not yet been specified. Please add a license file before releasing the project publicly.
+
+## 9. Testing
+
+### Unit tests
+
+- Framework: Vitest (planned)
+- Scope: Zod validations (`src/lib/validation/`), API helpers (`src/lib/api-helpers.ts`), data transformations and utilities (`src/lib/utils.ts`), and React hooks.
+- Targets: ≥80% coverage for validations and utils; higher for critical business rules.
+- Run (once configured): `npx vitest`
+
+### End-to-end (E2E) tests
+
+- Framework: Playwright (planned)
+- Scope: critical user journeys (Auth, Create Plan, Start/Complete/Abandon Session, basic Calendar/Profile flows).
+- Stability practices: stable `data-testid` selectors, global auth setup with storage state, retries and tracing on failures.
+- Run (once configured): `npx playwright install --with-deps` then `npx playwright test`
+
+For detailed scenarios, environments, and quality gates, see the Test Plan: [docs/plan-testow.md](./docs/plan-testow.md).

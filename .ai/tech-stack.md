@@ -23,3 +23,17 @@ CI/CD i Hosting:
 
 - Github Actions do tworzenia pipeline’ów CI/CD
 - Cloudfare do hostowania aplikacji
+
+Testy:
+
+- Testy jednostkowe (Vitest – planowane):
+  - Zakres: walidacje Zod (`src/lib/validation/`), helpery API (`src/lib/api-helpers.ts`), transformacje danych i utils (`src/lib/utils.ts`), hooki React.
+  - Cel pokrycia: ≥80% dla walidacji i utils, wyższe dla krytycznych reguł.
+  - Uruchamianie (po konfiguracji): `npx vitest`.
+
+- Testy end-to-end (Playwright – planowane):
+  - Zakres: kluczowe ścieżki (Auth, tworzenie planu, start/ukończenie/porzucenie sesji, kalendarz, profil).
+  - Praktyki stabilności: `data-testid`, globalny setup logowania (storageState), retry i trace przy błędach.
+  - Uruchamianie (po konfiguracji): `npx playwright install --with-deps` oraz `npx playwright test`.
+
+Szczegółowe scenariusze i kryteria jakości: zobacz `docs/plan-testow.md`.
