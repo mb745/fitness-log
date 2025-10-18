@@ -43,13 +43,15 @@ export const WorkoutPlanCard: React.FC<Props> = ({ plan }) => {
   });
 
   return (
-    <div className="border rounded-lg p-4 flex flex-col">
+    <div className="border rounded-lg p-4 flex flex-col" data-testid={`plan-card-${plan.id}`}>
       <div className="flex-1">
-        <h2 className="text-lg font-medium mb-2">{plan.is_active ? plan.name : `${plan.name} (plan nieaktywny)`}</h2>
+        <h2 className="text-lg font-medium mb-2" data-testid={`plan-name-${plan.id}`}>
+          {plan.is_active ? plan.name : `${plan.name} (plan nieaktywny)`}
+        </h2>
         {detail && detail.exercises.length > 0 && (
-          <div className="text-sm mb-2 space-y-1">
+          <div className="text-sm mb-2 space-y-1" data-testid={`plan-exercises-list-${plan.id}`}>
             {detail.exercises.map((ex) => (
-              <p key={ex.id} className="flex flex-wrap gap-1">
+              <p key={ex.id} className="flex flex-wrap gap-1" data-testid={`plan-exercise-item-${plan.id}-${ex.id}`}>
                 <span className="font-medium">{ex.exercise.name}</span>
                 <span className="text-muted-foreground">—</span>
                 <span>
@@ -65,13 +67,19 @@ export const WorkoutPlanCard: React.FC<Props> = ({ plan }) => {
       </div>
       <div className="mt-auto flex gap-2 pt-2 border-t">
         {!plan.is_active && (
-          <Button disabled={activateMutation.isPending} onClick={() => activateMutation.mutate(plan.id)} size="sm">
+          <Button
+            disabled={activateMutation.isPending}
+            data-testid={`activate-plan-button-${plan.id}`}
+            onClick={() => activateMutation.mutate(plan.id)}
+            size="sm"
+          >
             Aktywuj
           </Button>
         )}
         <Button
           variant="destructive"
           size="sm"
+          data-testid={`delete-plan-button-${plan.id}`}
           disabled={deleteMutation.isPending}
           onClick={() => {
             if (confirm("Usunąć plan?")) deleteMutation.mutate(plan.id);

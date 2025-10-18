@@ -132,7 +132,7 @@ export const StepExercises: React.FC = () => {
 
   return (
     <div>
-      <Button className="mb-4" type="button" onClick={() => setModalOpen(true)}>
+      <Button className="mb-4" type="button" data-testid="add-exercises-button" onClick={() => setModalOpen(true)}>
         Dodaj ćwiczenia
       </Button>
 
@@ -157,7 +157,9 @@ export const StepExercises: React.FC = () => {
           ))}
         </SortableContext>
         {draft.exercises.length === 0 && (
-          <p className="text-center text-sm mt-4">Brak ćwiczeń – dodaj pierwsze, aby je skonfigurować.</p>
+          <p className="text-center text-sm mt-4" data-testid="empty-exercises-message">
+            Brak ćwiczeń – dodaj pierwsze, aby je skonfigurować.
+          </p>
         )}
       </DndContext>
 

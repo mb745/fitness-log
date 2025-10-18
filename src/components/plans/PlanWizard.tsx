@@ -46,7 +46,7 @@ const PlanWizardInner: React.FC = () => {
         <label htmlFor="plan-name" className="block text-sm mb-1">
           Nazwa planu
         </label>
-        <Input id="plan-name" {...form.register("name", { required: true })} />
+        <Input id="plan-name" data-testid="plan-name-input" {...form.register("name", { required: true })} />
         {form.formState.errors.name && (
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.name.message}</p>
         )}
@@ -66,7 +66,13 @@ const PlanWizardInner: React.FC = () => {
             { label: "Nd", value: 0 },
           ].map((day) => (
             <label key={day.value} className="flex items-center space-x-1 text-sm">
-              <input type="checkbox" value={day.value} {...form.register("schedule_days")} className="accent-primary" />
+              <input
+                type="checkbox"
+                value={day.value}
+                data-testid={`schedule-day-${day.value}`}
+                {...form.register("schedule_days")}
+                className="accent-primary"
+              />
               <span>{day.label}</span>
             </label>
           ))}
@@ -104,6 +110,7 @@ const PlanWizardInner: React.FC = () => {
           which validates against the full schema.
       */}
       <form
+        data-testid="plan-wizard-form"
         onSubmit={async (e) => {
           if (stepIdx < steps.length - 1) {
             // Bypass full schema validation for intermediary steps
@@ -169,10 +176,20 @@ const PlanWizardInner: React.FC = () => {
       >
         {renderStep()}
         <div className="flex justify-between mt-6">
-          <Button type="button" variant="secondary" disabled={stepIdx === 0} onClick={back}>
+          <Button
+            type="button"
+            variant="secondary"
+            data-testid="wizard-back-button"
+            disabled={stepIdx === 0}
+            onClick={back}
+          >
             Wstecz
           </Button>
-          <Button type="submit" disabled={stepIdx === steps.length - 1 && draft.exercises.length === 0}>
+          <Button
+            type="submit"
+            data-testid="wizard-next-button"
+            disabled={stepIdx === steps.length - 1 && draft.exercises.length === 0}
+          >
             {stepIdx === steps.length - 1 ? "Zakończ" : "Dalej"}
           </Button>
         </div>

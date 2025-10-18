@@ -1,0 +1,112 @@
+[dotenv@17.2.3] injecting env (5) from .env.prod -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+
+Running 11 tests using 7 workers
+
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: ⚙️  suppress all logs with { quiet: true }
+🔐 Executing global setup...
+✅ Global setup completed successfully
+  ✓   1 [setup] › tests\e2e\global-setup.ts:21:1 › Global setup (1.8s)
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: ⚙️  enable debug logging with { debug: true }
+[dotenv@17.2.3] injecting env (0) from .env.prod -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+  ✓   7 [chromium] › tests\e2e\tests\planWizard.spec.ts:104:3 › Plan Wizard - Page Object Model Examples › Get plan cards from plans page (2.6s)
+  ✓   5 [chromium] › tests\e2e\tests\planWizard.spec.ts:72:3 › Plan Wizard - Page Object Model Examples › Navigate through wizard steps (5.9s)
+  ✓   8 [chromium] › tests\e2e\tests\planWizard.spec.ts:123:3 › Plan Wizard - Page Object Model Examples › Schedule days mapping (6.6s)
+  ✓  10 [chromium] › tests\e2e\tests\planWizard.spec.ts:192:3 › Plans Page - CRUD Operations › Test cancel delete plan (2.1s)
+  ✓   3 [chromium] › tests\e2e\tests\planWizard.spec.ts:40:3 › Plan Wizard - Page Object Model Examples › Navigate to plan wizard from plans page (8.4s)
+  ✘   9 [chromium] › tests\e2e\tests\planWizard.spec.ts:162:3 › Plans Page - CRUD Operations › Check plan visibility and details (1.3s)
+  ✘   2 [chromium] › tests\e2e\tests\planWizard.spec.ts:23:3 › Plan Wizard - Page Object Model Examples › Navigate to plans page and verify layout (5.5s)
+  ✘   6 [chromium] › tests\e2e\tests\planWizard.spec.ts:52:3 › Plan Wizard - Page Object Model Examples › Fill plan wizard step 1 (6.9s)
+  ✓   4 [chromium] › tests\e2e\tests\planWizard.spec.ts:89:3 › Plan Wizard - Page Object Model Examples › Verify wizard summary step (7.2s)
+
+
+  1) [chromium] › tests\e2e\tests\planWizard.spec.ts:23:3 › Plan Wizard - Page Object Model Examples › Navigate to plans page and verify layout 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      34 |     const isAddButtonVisible = await plansPage.isAddNewPlanButtonVisible();
+      35 |     
+    > 36 |     expect(isGridVisible || isAddButtonVisible).toBe(true);
+         |                                                 ^
+      37 |     expect(isAddButtonVisible).toBe(true);
+      38 |   });
+      39 |
+        at C:\Users\mateusz.bielecki\repos\fitness-log\tests\e2e\tests\planWizard.spec.ts:36:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-4fb07-lans-page-and-verify-layout-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-4fb07-lans-page-and-verify-layout-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\output\tests-e2e-tests-planWizard-4fb07-lans-page-and-verify-layout-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\tests\planWizard.spec.ts:52:3 › Plan Wizard - Page Object Model Examples › Fill plan wizard step 1 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"Upper Body - Test Plan"[39m
+    Received: [31m""[39m
+
+      63 |
+      64 |     // Assertions
+    > 65 |     expect(await wizard.getPlanNameValue()).toBe(planName);
+         |                                             ^
+      66 |     expect(await wizard.getSelectedScheduleDays()).toEqual(scheduleDays);
+      67 |
+      68 |     // Verify button is enabled to go to next step
+        at C:\Users\mateusz.bielecki\repos\fitness-log\tests\e2e\tests\planWizard.spec.ts:65:45
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-a5d33-les-Fill-plan-wizard-step-1-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-a5d33-les-Fill-plan-wizard-step-1-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\output\tests-e2e-tests-planWizard-a5d33-les-Fill-plan-wizard-step-1-chromium\error-context.md
+
+  3) [chromium] › tests\e2e\tests\planWizard.spec.ts:162:3 › Plans Page - CRUD Operations › Check plan visibility and details 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      168 |     
+      169 |     // Either the grid should be visible (if there are plans) or the add button should be visible
+    > 170 |     expect(isGridVisible || isAddButtonVisible).toBe(true);
+          |                                                 ^
+      171 |
+      172 |     // Test - jeśli istnieją plany, pobrań ich detale
+      173 |     const planCount = await plansPage.getPlanCardsCount();
+        at C:\Users\mateusz.bielecki\repos\fitness-log\tests\e2e\tests\planWizard.spec.ts:170:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-de492-plan-visibility-and-details-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\output\tests-e2e-tests-planWizard-de492-plan-visibility-and-details-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\output\tests-e2e-tests-planWizard-de492-plan-visibility-and-details-chromium\error-context.md
+
+  3 failed
+    [chromium] › tests\e2e\tests\planWizard.spec.ts:23:3 › Plan Wizard - Page Object Model Examples › Navigate to plans page and verify layout 
+    [chromium] › tests\e2e\tests\planWizard.spec.ts:52:3 › Plan Wizard - Page Object Model Examples › Fill plan wizard step 1 
+    [chromium] › tests\e2e\tests\planWizard.spec.ts:162:3 › Plans Page - CRUD Operations › Check plan visibility and details 
+  1 did not run
+  7 passed (20.3s)
+
+[36m  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.[39m

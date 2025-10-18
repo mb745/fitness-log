@@ -88,6 +88,7 @@ export function RegisterForm({ className }: { className?: string }) {
           id="email"
           type="email"
           aria-invalid={!!errors.email}
+          data-testid="email-input"
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/50"
           {...register("email")}
         />
@@ -102,6 +103,7 @@ export function RegisterForm({ className }: { className?: string }) {
           id="password"
           type="password"
           aria-invalid={!!errors.password}
+          data-testid="password-input"
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/50"
           {...register("password")}
         />
@@ -116,6 +118,7 @@ export function RegisterForm({ className }: { className?: string }) {
           id="confirmPassword"
           type="password"
           aria-invalid={!!errors.confirmPassword}
+          data-testid="password-confirm-input"
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/50"
           {...register("confirmPassword")}
         />

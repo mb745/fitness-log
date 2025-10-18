@@ -37,3 +37,4 @@ trace.zip
 /test-results/
 /blob-report/
 /playwright-report/
+.env.prod

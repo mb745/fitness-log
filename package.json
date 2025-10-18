@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:prod": "astro dev --mode prod",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -43,6 +44,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "immer": "^10.0.2",
     "lucide-react": "^0.487.0",
     "react": "^19.1.1",

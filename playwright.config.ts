@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
 
+dotenv.config({ path: path.resolve(process.cwd(), ".env.prod") });
 /**
  * PLAYWRIGHT CONFIGURATION
  *
@@ -58,14 +61,26 @@ export default defineConfig({
   // Projekty - konfiguracja dla różnych przeglądarek/urządzeń
   projects: [
     {
+      name: "setup",
+      testMatch: /global-setup\.ts/,
+      fullyParallel: true,
+      teardown: "teardown",
+    },
+
+    {
+      name: "teardown",
+      testMatch: /global-teardown\.ts/,
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"],
     },
   ],
 
-  // Global setup/teardown
-  globalSetup: "./tests/e2e/global-setup.ts",
-  globalTeardown: "./tests/e2e/global-teardown.ts",
+  // // Global setup/teardown
+  // globalSetup: "./tests/e2e/global-setup.ts",
+  // globalTeardown: "./tests/e2e/global-teardown.ts",
 
   // Use configuration
   use: {

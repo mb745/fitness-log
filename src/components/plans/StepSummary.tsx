@@ -14,10 +14,10 @@ export const StepSummary: React.FC = () => {
   return (
     <div>
       <h2 className="text-lg font-semibold mb-4">Podsumowanie planu</h2>
-      <p>Nazwa: {draft.name}</p>
-      <p>Liczba ćwiczeń: {draft.exercises.length}</p>
-      <p>Łącznie serii: {totalSeries}</p>
-      <p>Szacowany czas (bez rozgrzewki): ~{estimatedMinutes} min</p>
+      <p data-testid="summary-plan-name">Nazwa: {draft.name}</p>
+      <p data-testid="summary-exercises-count">Liczba ćwiczeń: {draft.exercises.length}</p>
+      <p data-testid="summary-total-sets">Łącznie serii: {totalSeries}</p>
+      <p data-testid="summary-estimated-time">Szacowany czas (bez rozgrzewki): ~{estimatedMinutes} min</p>
     </div>
   );
 };

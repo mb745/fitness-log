@@ -7,6 +7,7 @@ export interface PlanDraftState {
   setField<K extends keyof WorkoutPlanCreateInput>(key: K, value: WorkoutPlanCreateInput[K]): void;
   setExercises(exercises: PlanExerciseInput[]): void;
   markClean(): void;
+  reset(): void;
 }
 
 const initialDraft: WorkoutPlanCreateInput & { isDirty: boolean } = {
@@ -35,6 +36,10 @@ export const usePlanDraft = create<PlanDraftState>()(
     markClean: () =>
       set((state) => {
         state.draft.isDirty = false;
+      }),
+    reset: () =>
+      set((state) => {
+        state.draft = { ...initialDraft };
       }),
   }))
 );

@@ -1,4 +1,3 @@
-import { Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 
 /**
@@ -15,14 +14,6 @@ export class LoginPage extends BasePage {
   private readonly loginButton = '[data-testid="login-button"]';
   private readonly errorMessage = '[data-testid="error-message"]';
   private readonly registerLink = '[data-testid="register-link"]';
-
-  constructor(page: Page) {
-    super(page);
-  }
-
-  /**
-   * Naviguj do strony logowania
-   */
   async goto() {
     await this.page.goto("/login");
   }

@@ -1,5 +1,8 @@
-import { chromium, FullConfig } from "@playwright/test";
 import path from "path";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import { LoginPage } from "./pages/loginPage";
+import { test as setup } from "@playwright/test";
 
 /**
  * PLAYWRIGHT GLOBAL SETUP
@@ -11,54 +14,28 @@ import path from "path";
  * - Wstępnej konfiguracji testów
  */
 
-const authFile = path.join(__dirname, "auth.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const authFile = path.join(__dirname, "./auth.json");
 
-async function globalSetup(config: FullConfig) {
+setup("Global setup", async ({ page }) => {
   console.log("🔐 Executing global setup...");
 
-  // Pomiń setup jeśli już istnieje plik auth
-  try {
-    const fs = await import("fs").then((m) => m.promises);
-    await fs.access(authFile);
-    console.log("✅ Auth file found, skipping login...");
-    return;
-  } catch {
-    // File doesn't exist, continue with login
-  }
-
-  const browser = await chromium.launch();
-  const context = await browser.createContext();
-  const page = await context.newPage();
+  const loginPage = new LoginPage(page);
 
   try {
     // Naviguj do strony logowania
-    await page.goto("http://localhost:3000/login", { waitUntil: "networkidle" });
+    await loginPage.goto();
 
     // Poczekaj na załadowanie strony
     await page.waitForLoadState("domcontentloaded");
-
-    // Wpisz dane testowe (dostosuj do twojej aplikacji)
-    // UWAGA: Użyj zmiennych środowiskowych w CI!
-    const testEmail = process.env.TEST_EMAIL || "test@example.com";
-    const testPassword = process.env.TEST_PASSWORD || "test123456";
-
-    // Zaloguj się
-    await page.fill('[data-testid="email-input"]', testEmail);
-    await page.fill('[data-testid="password-input"]', testPassword);
-    await page.click('[data-testid="login-button"]');
-
-    // Poczekaj na redirekcję do dashboard
-    await page.waitForURL("**/dashboard", { timeout: 10000 });
+    await loginPage.login(process.env.E2E_USERNAME || "test@example.com", process.env.E2E_PASSWORD || "password");
 
     // Zapisz stan sesji
-    await context.storageState({ path: authFile });
+    await page.context().storageState({ path: authFile });
     console.log("✅ Global setup completed successfully");
   } catch (error) {
     console.error("❌ Global setup failed:", error);
     throw error;
-  } finally {
-    await browser.close();
   }
-}
-
-export default globalSetup;
+});

@@ -81,7 +81,10 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      data-testid="exercise-library-modal"
+    >
       <div className="bg-white dark:bg-slate-900 w-full max-w-3xl h-[80vh] rounded-lg shadow-lg flex flex-col">
         {/* ModalHeader */}
         <div className="p-4 border-b space-y-2">
@@ -89,6 +92,7 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
           <div className="flex items-center gap-2">
             <Select
               className="flex-1"
+              data-testid="muscle-group-filter"
               value={muscleGroupId?.toString() ?? ""}
               onChange={(e) => {
                 const val = e.target.value;
@@ -102,13 +106,14 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
                 </option>
               ))}
             </Select>
-            <Button variant="ghost" onClick={onClose}>
+            <Button variant="ghost" data-testid="exercise-modal-close-button" onClick={onClose}>
               Zamknij
             </Button>
           </div>
           {/* Row 2: search input full width */}
           <Input
             className="w-full"
+            data-testid="exercise-search-input"
             placeholder="Wyszukaj ćwiczenie..."
             value={rawQuery}
             onChange={(e) => setRawQuery(e.target.value)}
@@ -116,7 +121,7 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
         </div>
 
         {/* VirtualizedExerciseList */}
-        <div ref={listRef} className="flex-1 overflow-y-auto px-4 relative">
+        <div ref={listRef} className="flex-1 overflow-y-auto px-4 relative" data-testid="exercise-list-container">
           <div
             style={{
               height: rowVirtualizer.getTotalSize(),
@@ -131,6 +136,7 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
                   key={virtualRow.key}
                   role="button"
                   tabIndex={0}
+                  data-testid={`exercise-item-${exercise?.id ?? virtualRow.index}`}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       if (exercise) onAdd(exercise);
@@ -159,8 +165,16 @@ export const ExerciseLibraryModal: React.FC<ExerciseLibraryModalProps> = ({ open
           </div>
           {/* spacer to allow scroll near-end detection */}
           <div className="h-4" />
-          {isFetchingNextPage && <p className="text-center py-2 text-sm">Ładowanie...</p>}
-          {!isFetchingNextPage && items.length === 0 && <p className="text-center py-8">Brak wyników</p>}
+          {isFetchingNextPage && (
+            <p className="text-center py-2 text-sm" data-testid="exercise-loading-indicator">
+              Ładowanie...
+            </p>
+          )}
+          {!isFetchingNextPage && items.length === 0 && (
+            <p className="text-center py-8" data-testid="exercise-no-results">
+              Brak wyników
+            </p>
+          )}
         </div>
       </div>
     </div>
