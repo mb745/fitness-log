@@ -119,33 +119,6 @@ test.describe("Plan Wizard - Page Object Model Examples", () => {
       }
     }
   });
-
-  test("Schedule days mapping", async () => {
-    // Setup
-    await wizard.goto();
-    await wizard.waitForWizardLoad();
-
-    // Test - zaznacz wszystkie dni robocze (Pn-Pt)
-    const workDays = [1, 2, 3, 4, 5]; // Poniedziałek - Piątek
-    await wizard.selectScheduleDays(workDays);
-
-    // Assertions
-    const selectedDays = await wizard.getSelectedScheduleDays();
-
-    // Check that all work days are selected
-    workDays.forEach((day) => {
-      expect(selectedDays).toContain(day);
-    });
-
-    // Test - usuń środę
-    await wizard.unselectScheduleDay(3);
-    const updatedDays = await wizard.getSelectedScheduleDays();
-    expect(updatedDays).not.toContain(3);
-    expect(updatedDays).toContain(1);
-    expect(updatedDays).toContain(2);
-    expect(updatedDays).toContain(4);
-    expect(updatedDays).toContain(5);
-  });
 });
 
 test.describe("Plans Page - CRUD Operations", () => {

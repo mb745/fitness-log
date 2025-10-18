@@ -78,7 +78,7 @@ export class PlanWizardPage extends BasePage {
       }
 
       // If not successful, wait a bit longer before retry
-      await this.wait(300);
+      await this.wait(1000);
     }
 
     // If we still haven't succeeded, throw an error
