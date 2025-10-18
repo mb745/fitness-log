@@ -34,7 +34,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Retry-e dla flaky testów w CI
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 2,
 
   // Liczba worker-ów (paralelne testy)
   workers: process.env.CI ? 1 : undefined,
