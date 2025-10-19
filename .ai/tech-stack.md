@@ -21,8 +21,10 @@ AI - Komunikacja z modelami przez usługę Openrouter.ai:
 
 CI/CD i Hosting:
 
-- Github Actions do tworzenia pipeline’ów CI/CD
+- Github Actions do tworzenia pipeline'ów CI/CD
 - Cloudfare do hostowania aplikacji
+- Ochrona gałęzi głównej (main) z wymaganiem przejścia kontroli jakości
+- Automatyczne wdrażanie na środowisko produkcyjne
 
 Testy:
 
@@ -37,3 +39,15 @@ Testy:
   - Uruchamianie (po konfiguracji): `npx playwright install --with-deps` oraz `npx playwright test`.
 
 Szczegółowe scenariusze i kryteria jakości: zobacz `docs/plan-testow.md`.
+
+Wdrożenia & Wydania:
+
+**Strategia Deploymentu na Cloudflare Pages:**
+
+- Ochrona gałęzi: Gałąź `main` jest chroniona i przyjmuje zmiany wyłącznie poprzez pull requesty
+- Wymagane przejścia: Wszystkie PR muszą przejść kontrole lintingu, testów jednostkowych i E2E
+- Automatyczne wdrażanie: Po merge do `main`, GitHub Actions automatycznie buduje i wdraża aplikację
+- Zmienne środowiskowe: Zarządzane przez Cloudflare Pages (baza danych, klucze API, zmienne Supabase)
+- Monitoring: Logi deploymentu dostępne w dashboardzie Cloudflare Pages
+- Rollback: Cloudflare Pages automatycznie wycofuje się do poprzedniej stabilnej wersji w razie błędu
+- Wydania: Numerowanie wersji zgodnie z konwencją Semantic Versioning (MAJOR.MINOR.PATCH)

@@ -26,6 +26,7 @@
   - [9. Testing](#9-testing)
     - [Unit tests](#unit-tests)
     - [End-to-end (E2E) tests](#end-to-end-e2e-tests)
+  - [10. Deployments & Releases](#10-deployments--releases)
 
 ## 1. Project name
 
@@ -157,3 +158,31 @@ License information has not yet been specified. Please add a license file before
 - Run (once configured): `npx playwright install --with-deps` then `npx playwright test`
 
 For detailed scenarios, environments, and quality gates, see the Test Plan: [docs/plan-testow.md](./docs/plan-testow.md).
+
+## 10. Deployments & Releases
+
+The application is deployed to Cloudflare Pages. The deployment process involves:
+
+1. **Branch Protection:**
+   - All changes must be made via pull requests.
+   - Pull requests must pass all CI checks (linting, tests, etc.).
+   - The `main` branch is protected and can only be updated via merge requests.
+
+2. **CI/CD Pipeline:**
+   - GitHub Actions runs on every push to the `main` branch.
+   - It builds the project, runs tests, and deploys to Cloudflare Pages.
+   - The deployment URL is available in the GitHub Actions workflow logs.
+
+3. **Environment Variables:**
+   - Production environment variables are managed via Cloudflare Pages.
+   - `.env` files are not committed to the repository.
+   - Sensitive data (e.g., API keys, database URLs) are kept in Cloudflare Pages secrets.
+
+4. **Monitoring & Logging:**
+   - Cloudflare Pages provides detailed deployment logs and error tracking.
+   - Application logs are streamed to Cloudflare's dashboard.
+   - Error alerts are configured via Cloudflare Pages.
+
+5. **Rollback Process:**
+   - If a deployment fails, Cloudflare Pages automatically rolls back to the previous successful deployment.
+   - Manual intervention is required for major issues.
