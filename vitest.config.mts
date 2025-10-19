@@ -33,8 +33,11 @@ export default defineConfig({
       },
     },
     // Include/exclude patterns
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    exclude: ["node_modules", "dist"],
+    include: [
+      "src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+      "tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+    ],
+    exclude: ["node_modules", "dist", "tests/e2e/**"],
     // Inline snapshots
     snapshotFormat: {
       printBasicPrototype: false,
