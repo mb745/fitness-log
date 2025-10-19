@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import type { ExercisesListResponse, ExercisesQueryParams, ExerciseDTO } from "../../types";
+import type { ExercisesListResponse, ExercisesQueryParams } from "../../types";
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {

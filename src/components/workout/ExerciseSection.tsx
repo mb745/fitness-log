@@ -6,7 +6,6 @@ interface ExerciseSectionProps {
   sets: SessionSetWithExerciseDTO[];
   restSeconds?: number;
   currentActiveSetId: number | null;
-  totalSetsCount: number;
   pendingSetsCount: number;
 }
 
@@ -20,7 +19,6 @@ export function ExerciseSection({
   sets,
   restSeconds,
   currentActiveSetId,
-  totalSetsCount,
   pendingSetsCount,
 }: ExerciseSectionProps) {
   return (
@@ -36,7 +34,7 @@ export function ExerciseSection({
 
       {/* Sets list */}
       <div className="space-y-2" role="list" aria-label={`Serie dla ${exerciseName}`}>
-        {sets.map((set, index) => {
+        {sets.map((set) => {
           // Check if this is the last pending set
           const isLastPendingSet = pendingSetsCount === 1 && set.status === "pending";
           return (

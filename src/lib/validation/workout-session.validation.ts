@@ -67,7 +67,6 @@ export const sessionQuerySchema = z
     const from = data.from ? isoDateString.optional().parse(data.from) : undefined;
     const to = data.to ? isoDateString.optional().parse(data.to) : undefined;
 
-    const sort = data.sort;
     const workout_plan_id = data.workout_plan_id;
 
     return {

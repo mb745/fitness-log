@@ -7,8 +7,6 @@ import type {
   WorkoutSessionsListResponse,
   WorkoutSessionCreateCommand,
   WorkoutSessionUpdateCommand,
-  SessionSetDTO,
-  WorkoutSessionStatus,
 } from "../../types";
 import type { Database } from "../../db/database.types";
 import { NotFoundError, ConflictError, UnprocessableEntityError, BadRequestError } from "../api-helpers";
@@ -167,7 +165,7 @@ export class WorkoutSessionService {
     }
 
     // Transform sets to include exercise name
-    const setsWithExercises = ((data.sets as any[]) || []).map((set) => ({
+    const setsWithExercises = ((data.sets || []) as Record<string, unknown>[]).map((set) => ({
       id: set.id,
       workout_session_id: set.workout_session_id,
       plan_exercise_id: set.plan_exercise_id,
@@ -193,7 +191,7 @@ export class WorkoutSessionService {
 
     return {
       ...(data as WorkoutSessionDTO),
-      plan_name: (data.workout_plan as any)?.name || "Nieznany plan",
+      plan_name: (data.workout_plan as Record<string, unknown>)?.name || "Nieznany plan",
       sets: sortedSets,
     };
   }

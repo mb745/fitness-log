@@ -59,10 +59,10 @@ const userEmail = Astro.locals.user?.email || "";
           logoutButton.textContent = "Wyloguj się";
           logoutButton.removeAttribute("disabled");
         }
-      } catch (error) {
-        console.error("Logout error:", error);
+      } catch {
         alert("Wystąpił błąd podczas wylogowania");
         logoutButton.textContent = "Wyloguj się";
+        // eslint-disable-next-line prettier/prettier
         logoutButton.removeAttribute("disabled");
       }
     });

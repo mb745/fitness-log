@@ -24,7 +24,7 @@ export const usePlanDraft = create<PlanDraftState>()(
     draft: initialDraft,
     setField: (key, value) =>
       set((state) => {
-        // @ts-expect-error dynamic
+        // @ts-expect-error dynamic property assignment with zustand/immer
         state.draft[key] = value;
         state.draft.isDirty = true;
       }),

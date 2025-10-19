@@ -15,8 +15,7 @@ const LimitationsTab: React.FC = () => {
     if (debounced !== (profile?.injuries_limitations ?? "")) {
       updateProfile({ injuries_limitations: debounced });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debounced]);
+  }, [debounced, updateProfile, profile?.injuries_limitations]);
 
   return (
     <div className="max-w-xl">

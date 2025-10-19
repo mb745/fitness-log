@@ -12,7 +12,7 @@ import { errorResponse, jsonResponse, logApiError } from "@/lib/api-helpers";
  */
 export const prerender = false;
 
-export const POST: APIRoute = async ({ locals, request }) => {
+export const POST: APIRoute = async ({ locals }) => {
   try {
     // Attempt to sign out - this is idempotent and safe even without active session
     const { error } = await locals.supabase.auth.signOut();

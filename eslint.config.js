@@ -61,6 +61,12 @@ export default tseslint.config(
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  {
+    files: ["**/*.astro"],
+    rules: {
+      "prettier/prettier": "off",
+    },
+  },
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );

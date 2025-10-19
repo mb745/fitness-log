@@ -1,4 +1,4 @@
-import { expect, afterEach, beforeEach, vi } from "vitest";
+import { expect, afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
 /**
@@ -28,18 +28,22 @@ afterEach(() => {
  * Mock localStorage - imituje browser Storage API
  */
 const localStorageMock = (() => {
-  let store: Record<string, string> = {};
+  const store: Record<string, string> = {};
 
   return {
-    getItem: (key: string) => store[key] || null,
+    getItem: (key: string) => store[key] ?? null,
     setItem: (key: string, value: string) => {
       store[key] = String(value);
     },
     removeItem: (key: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete store[key];
     },
     clear: () => {
-      store = {};
+      Object.keys(store).forEach((key) => {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete store[key];
+      });
     },
   };
 })();
@@ -79,7 +83,7 @@ global.IntersectionObserver = vi.fn(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-})) as any;
+})) as IntersectionObserver;
 
 /**
  * Mock ResizeObserver
@@ -88,7 +92,7 @@ global.ResizeObserver = vi.fn(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-})) as any;
+})) as ResizeObserver;
 
 // ============================================================
 // ENVIRONMENT

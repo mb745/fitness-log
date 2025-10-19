@@ -98,7 +98,7 @@ export function usePatchSet() {
       }
     },
     // Always refetch after error or success to ensure sync
-    onSettled: async (_data, _error, variables) => {
+    onSettled: async () => {
       // Invalidate and refetch to ensure UI is in sync
       await qc.invalidateQueries({ queryKey: ["activeSession"], exact: false });
       // Force immediate refetch for better responsiveness

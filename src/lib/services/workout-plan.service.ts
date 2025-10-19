@@ -155,7 +155,7 @@ export class WorkoutPlanService {
     const plan: WorkoutPlanDetailDTO = {
       ...data,
       schedule_type: data.schedule_type as "weekly" | "interval",
-      exercises: (data.plan_exercises || []).map((pe: any) => ({
+      exercises: (data.plan_exercises || []).map((pe) => ({
         ...pe,
         exercise: {
           ...pe.exercises,
@@ -165,7 +165,7 @@ export class WorkoutPlanService {
     };
 
     // Remove the nested plan_exercises property as it's now in exercises
-    delete (plan as any).plan_exercises;
+    delete (plan as Record<string, unknown>).plan_exercises;
 
     return plan;
   }

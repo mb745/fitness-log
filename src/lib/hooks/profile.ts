@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ProfileDTO, ProfileUpdateCommand, ProfileCreateCommand } from "../../types";
+import type { ProfileDTO, ProfileUpdateCommand } from "../../types";
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {

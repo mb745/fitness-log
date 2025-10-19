@@ -68,7 +68,7 @@ export function useDeletePlanMutation() {
       // Optimistically remove the plan from each cached result
       prev.forEach(([key, value]) => {
         if (!value) return;
-        qc.setQueryData<WorkoutPlansListResponse>(key as any, {
+        qc.setQueryData<WorkoutPlansListResponse>(key, {
           ...value,
           data: value.data.filter((p) => p.id !== planId),
         });
@@ -78,9 +78,11 @@ export function useDeletePlanMutation() {
     },
     onError: (_err, _planId, context) => {
       // Rollback optimistic update
-      context?.prev.forEach(([key, value]: any) => {
-        qc.setQueryData(key, value);
-      });
+      if (context?.prev) {
+        context.prev.forEach(([key, value]: [unknown, WorkoutPlansListResponse | undefined]) => {
+          qc.setQueryData(key, value);
+        });
+      }
     },
     onSuccess() {
       qc.invalidateQueries({ queryKey: ["workoutPlans"] });
