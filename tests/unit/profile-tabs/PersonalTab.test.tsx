@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect as vitestExpect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import PersonalTab from "../PersonalTab";
-import * as profileHook from "../../../../lib/hooks/profile";
+import PersonalTab from "../../../src/components/profile/tabs/PersonalTab";
+import * as profileHook from "../../../src/lib/hooks/profile";
 
 // ============================================================
 // MOCKS
@@ -13,30 +13,30 @@ import * as profileHook from "../../../../lib/hooks/profile";
  * Mock useProfile hook z TanStack React Query
  * Zwraca dane profilu i mutacje
  */
-vi.mock("../../../../lib/hooks/profile", () => ({
+vi.mock("../../../src/lib/hooks/profile", () => ({
   useProfile: vi.fn(),
 }));
 
 /**
  * Mock komponenty UI aby uprościć testowanie
  */
-vi.mock("../../../ui/button", () => ({
+vi.mock("../../../src/components/ui/button", () => ({
   Button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-vi.mock("../../../ui/input", () => ({
+vi.mock("../../../src/components/ui/input", () => ({
   Input: (props: Record<string, unknown>) => <input {...props} />,
 }));
 
-vi.mock("../../../ui/select", () => ({
+vi.mock("../../../src/components/ui/select", () => ({
   Select: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
     <select {...props}>{children}</select>
   ),
 }));
 
-vi.mock("../../../ui/toast", () => ({
+vi.mock("../../../src/components/ui/toast", () => ({
   Toast: ({ message, onClose, ...props }: { message: string; onClose: () => void } & Record<string, unknown>) => (
     <div {...props}>
       <span>{message}</span>
@@ -94,10 +94,10 @@ describe("PersonalTab Component", () => {
       vi.mocked(profileHook.useProfile).mockReturnValue(createMockUseProfile());
       render(<PersonalTab />);
 
-      expect(screen.getByLabelText(/Waga \(kg\)/)).toBeTruthy();
-      expect(screen.getByLabelText(/Wzrost \(cm\)/)).toBeTruthy();
-      expect(screen.getByLabelText(/Płeć/)).toBeTruthy();
-      expect(screen.getByTestId("submit-button")).toBeTruthy();
+      vitestExpect(screen.getByLabelText(/Waga \(kg\)/)).toBeTruthy();
+      vitestExpect(screen.getByLabelText(/Wzrost \(cm\)/)).toBeTruthy();
+      vitestExpect(screen.getByLabelText(/Płeć/)).toBeTruthy();
+      vitestExpect(screen.getByTestId("submit-button")).toBeTruthy();
     });
 
     it("powinien wyświetlać button submit z tekstem 'Zapisz'", () => {
@@ -105,8 +105,8 @@ describe("PersonalTab Component", () => {
       render(<PersonalTab />);
 
       const submitBtn = screen.getByTestId("submit-button");
-      expect(submitBtn.textContent).toBe("Zapisz");
-      expect((submitBtn as HTMLButtonElement).disabled).toBe(false);
+      vitestExpect(submitBtn.textContent).toBe("Zapisz");
+      vitestExpect((submitBtn as HTMLButtonElement).disabled).toBe(false);
     });
 
     it("powinien renderować wszystkie opcje w select dla płci", () => {
@@ -116,11 +116,11 @@ describe("PersonalTab Component", () => {
       const genderSelect = screen.getByTestId("gender-select");
       const options = genderSelect.querySelectorAll("option");
 
-      expect(options.length).toBe(4);
-      expect((options[0] as HTMLOptionElement).value).toBe("");
-      expect((options[1] as HTMLOptionElement).value).toBe("male");
-      expect((options[2] as HTMLOptionElement).value).toBe("female");
-      expect((options[3] as HTMLOptionElement).value).toBe("na");
+      vitestExpect(options.length).toBe(4);
+      vitestExpect((options[0] as HTMLOptionElement).value).toBe("");
+      vitestExpect((options[1] as HTMLOptionElement).value).toBe("male");
+      vitestExpect((options[2] as HTMLOptionElement).value).toBe("female");
+      vitestExpect((options[3] as HTMLOptionElement).value).toBe("na");
     });
   });
 
@@ -138,9 +138,9 @@ describe("PersonalTab Component", () => {
         const heightInput = screen.getByTestId("height-input") as HTMLInputElement;
         const genderSelect = screen.getByTestId("gender-select") as HTMLSelectElement;
 
-        expect(weightInput.value).toBe("80");
-        expect(heightInput.value).toBe("180");
-        expect(genderSelect.value).toBe("male");
+        vitestExpect(weightInput.value).toBe("80");
+        vitestExpect(heightInput.value).toBe("180");
+        vitestExpect(genderSelect.value).toBe("male");
       });
     });
 
@@ -159,9 +159,9 @@ describe("PersonalTab Component", () => {
         const heightInput = screen.getByTestId("height-input") as HTMLInputElement;
         const genderSelect = screen.getByTestId("gender-select") as HTMLSelectElement;
 
-        expect(weightInput.value).toBe("");
-        expect(heightInput.value).toBe("");
-        expect(genderSelect.value).toBe("");
+        vitestExpect(weightInput.value).toBe("");
+        vitestExpect(heightInput.value).toBe("");
+        vitestExpect(genderSelect.value).toBe("");
       });
     });
 
@@ -170,7 +170,7 @@ describe("PersonalTab Component", () => {
       const { rerender } = render(<PersonalTab />);
 
       await waitFor(() => {
-        expect((screen.getByTestId("weight-input") as HTMLInputElement).value).toBe("80");
+        vitestExpect((screen.getByTestId("weight-input") as HTMLInputElement).value).toBe("80");
       });
 
       const newProfileData = { ...mockProfileData, weight_kg: 95, height_cm: 185 };
@@ -181,8 +181,8 @@ describe("PersonalTab Component", () => {
         const weightInput = screen.getByTestId("weight-input") as HTMLInputElement;
         const heightInput = screen.getByTestId("height-input") as HTMLInputElement;
 
-        expect(weightInput.value).toBe("95");
-        expect(heightInput.value).toBe("185");
+        vitestExpect(weightInput.value).toBe("95");
+        vitestExpect(heightInput.value).toBe("185");
       });
     });
   });
@@ -205,8 +205,8 @@ describe("PersonalTab Component", () => {
       await user.clear(heightInput);
       await user.type(heightInput, "190");
 
-      expect(weightInput.value).toBe("90");
-      expect(heightInput.value).toBe("190");
+      vitestExpect(weightInput.value).toBe("90");
+      vitestExpect(heightInput.value).toBe("190");
     });
 
     it("powinien pozwolić na zmianę płci", async () => {
@@ -218,7 +218,7 @@ describe("PersonalTab Component", () => {
 
       await user.selectOptions(genderSelect, "female");
 
-      expect(genderSelect.value).toBe("female");
+      vitestExpect(genderSelect.value).toBe("female");
     });
 
     it("powinien czyszczać opcję płci gdy wybrano puste pole", async () => {
@@ -230,7 +230,7 @@ describe("PersonalTab Component", () => {
 
       await user.selectOptions(genderSelect, "");
 
-      expect(genderSelect.value).toBe("");
+      vitestExpect(genderSelect.value).toBe("");
     });
   });
 
@@ -253,8 +253,8 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(updateProfileMock).toHaveBeenCalledWith(
-          expect.objectContaining({
+        vitestExpect(updateProfileMock).toHaveBeenCalledWith(
+          vitestExpect.objectContaining({
             weight_kg: 85,
           })
         );
@@ -273,8 +273,8 @@ describe("PersonalTab Component", () => {
 
       await waitFor(() => {
         const toast = screen.getByTestId("toast");
-        expect(toast).toBeTruthy();
-        expect(toast.textContent).toContain("Zapisano zmiany");
+        vitestExpect(toast).toBeTruthy();
+        vitestExpect(toast.textContent).toContain("Zapisano zmiany");
       });
     });
 
@@ -295,8 +295,8 @@ describe("PersonalTab Component", () => {
 
       await waitFor(() => {
         const toast = screen.getByTestId("toast");
-        expect(toast).toBeTruthy();
-        expect(toast.textContent).toContain("Błąd podczas zapisywania");
+        vitestExpect(toast).toBeTruthy();
+        vitestExpect(toast.textContent).toContain("Błąd podczas zapisywania");
       });
 
       consoleErrorSpy.mockRestore();
@@ -316,7 +316,7 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(weightInput.value).toBe("88");
+        vitestExpect(weightInput.value).toBe("88");
       });
     });
 
@@ -331,13 +331,13 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       const toast = await screen.findByTestId("toast");
-      expect(toast).toBeTruthy();
+      vitestExpect(toast).toBeTruthy();
 
       const closeBtn = screen.getByRole("button", { name: /close/i });
       await user.click(closeBtn);
 
       await waitFor(() => {
-        expect(screen.queryByTestId("toast")).toBeNull();
+        vitestExpect(screen.queryByTestId("toast")).toBeNull();
       });
     });
   });
@@ -353,7 +353,7 @@ describe("PersonalTab Component", () => {
       render(<PersonalTab />);
 
       const submitBtn = screen.getByTestId("submit-button") as HTMLButtonElement;
-      expect(submitBtn.disabled).toBe(true);
+      vitestExpect(submitBtn.disabled).toBe(true);
     });
 
     it("powinien zmienić tekst buttona podczas aktualizacji", () => {
@@ -362,7 +362,7 @@ describe("PersonalTab Component", () => {
       render(<PersonalTab />);
 
       const submitBtn = screen.getByTestId("submit-button");
-      expect(submitBtn.textContent).toBe("Zapisywanie…");
+      vitestExpect(submitBtn.textContent).toBe("Zapisywanie…");
     });
 
     it("powinien przywrócić button do stanu normalnego po aktualizacji", async () => {
@@ -370,15 +370,15 @@ describe("PersonalTab Component", () => {
       const { rerender } = render(<PersonalTab />);
 
       let submitBtn = screen.getByTestId("submit-button") as HTMLButtonElement;
-      expect(submitBtn.disabled).toBe(true);
-      expect(submitBtn.textContent).toBe("Zapisywanie…");
+      vitestExpect(submitBtn.disabled).toBe(true);
+      vitestExpect(submitBtn.textContent).toBe("Zapisywanie…");
 
       vi.mocked(profileHook.useProfile).mockReturnValue(createMockUseProfile({ updating: false }));
       rerender(<PersonalTab />);
 
       submitBtn = screen.getByTestId("submit-button") as HTMLButtonElement;
-      expect(submitBtn.disabled).toBe(false);
-      expect(submitBtn.textContent).toBe("Zapisz");
+      vitestExpect(submitBtn.disabled).toBe(false);
+      vitestExpect(submitBtn.textContent).toBe("Zapisz");
     });
   });
 
@@ -390,7 +390,7 @@ describe("PersonalTab Component", () => {
     it("powinien obsługiwać null w profile.data", () => {
       vi.mocked(profileHook.useProfile).mockReturnValue(createMockUseProfile({ data: null }));
 
-      expect(() => {
+      vitestExpect(() => {
         render(<PersonalTab />);
       }).not.toThrow();
     });
@@ -408,8 +408,8 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(updateProfileMock).toHaveBeenCalledWith(
-          expect.objectContaining({
+        vitestExpect(updateProfileMock).toHaveBeenCalledWith(
+          vitestExpect.objectContaining({
             gender: "female",
           })
         );
@@ -430,8 +430,8 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(updateProfileMock).toHaveBeenCalledWith(
-          expect.objectContaining({
+        vitestExpect(updateProfileMock).toHaveBeenCalledWith(
+          vitestExpect.objectContaining({
             weight_kg: 82.5,
           })
         );
@@ -455,7 +455,7 @@ describe("PersonalTab Component", () => {
       render(<PersonalTab />);
 
       await waitFor(() => {
-        expect((screen.getByTestId("weight-input") as HTMLInputElement).value).toBe("80");
+        vitestExpect((screen.getByTestId("weight-input") as HTMLInputElement).value).toBe("80");
       });
 
       const weightInput = screen.getByTestId("weight-input");
@@ -465,11 +465,11 @@ describe("PersonalTab Component", () => {
 
       await waitFor(() => {
         const toast = screen.getByTestId("toast");
-        expect(toast.textContent).toContain("Zapisano zmiany");
+        vitestExpect(toast.textContent).toContain("Zapisano zmiany");
       });
 
-      expect(updateProfileMock).toHaveBeenCalledWith(
-        expect.objectContaining({
+      vitestExpect(updateProfileMock).toHaveBeenCalledWith(
+        vitestExpect.objectContaining({
           weight_kg: 92,
         })
       );
@@ -492,7 +492,7 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(updateProfileMock).toHaveBeenCalledTimes(1);
+        vitestExpect(updateProfileMock).toHaveBeenCalledTimes(1);
       });
 
       await user.clear(heightInput);
@@ -501,7 +501,7 @@ describe("PersonalTab Component", () => {
       await user.click(submitBtn);
 
       await waitFor(() => {
-        expect(updateProfileMock).toHaveBeenCalledTimes(2);
+        vitestExpect(updateProfileMock).toHaveBeenCalledTimes(2);
       });
     });
   });
