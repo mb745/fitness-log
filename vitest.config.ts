@@ -9,8 +9,8 @@ export default defineConfig({
     environment: "jsdom",
     // Pliki setup dla globalnej konfiguracji
     setupFiles: ["./vitest.setup.ts"],
-    // Globals - dostęp do describe, it, expect bez importów
-    globals: true,
+    // Globals disabled to prevent conflicts with Playwright
+    globals: false,
     // Coverage configuration
     coverage: {
       provider: "v8",
