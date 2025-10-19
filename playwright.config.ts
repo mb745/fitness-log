@@ -19,6 +19,8 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.prod") });
  */
 
 export default defineConfig({
+  // Katalog z testami E2E
+  testDir: "tests/e2e",
   // Timeout dla całego testu (w ms)
   timeout: 30 * 1000,
 
